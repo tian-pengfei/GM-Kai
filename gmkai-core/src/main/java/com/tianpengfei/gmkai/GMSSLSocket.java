@@ -4,10 +4,25 @@ import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GMSSLSocket extends SSLSocket {
 
 
+    private final ReentrantLock socketLock = new ReentrantLock();
+
+    private final GMSSLContextSpi gmsslContextSpi;
+
+    private final TransportContext conContext;
+
+    private final SSLConfiguration sslConfiguration;
+
+    GMSSLSocket(GMSSLContextSpi gmsslContextSpi, SSLConfiguration sslConfiguration) {
+        super();
+        this.gmsslContextSpi = gmsslContextSpi;
+        this.sslConfiguration = sslConfiguration;
+        this.conContext = null;
+    }
 
     @Override
     public String[] getSupportedCipherSuites() {

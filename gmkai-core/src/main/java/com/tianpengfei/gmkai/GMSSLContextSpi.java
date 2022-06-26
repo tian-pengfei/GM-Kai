@@ -3,8 +3,34 @@ package com.tianpengfei.gmkai;
 import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.List;
 
 public class GMSSLContextSpi extends SSLContextSpi {
+
+    private static final List<ProtocolVersion> supportedProtocols;
+    private static final List<ProtocolVersion> serverDefaultProtocols;
+
+    private static final List<CipherSuite> supportedCipherSuites;
+    private static final List<CipherSuite> serverDefaultCipherSuites;
+
+    static {
+        supportedProtocols = Arrays.asList(
+                ProtocolVersion.PROTOCOLS_OF_GMSSLs
+        );
+        serverDefaultProtocols = Arrays.asList(
+                ProtocolVersion.PROTOCOLS_OF_GMSSLs
+        );
+
+
+        supportedCipherSuites = Arrays.asList(
+                CipherSuite.values()
+        );
+        serverDefaultCipherSuites = Arrays.asList(
+                CipherSuite.values()
+        );
+
+    }
 
 
     @Override
