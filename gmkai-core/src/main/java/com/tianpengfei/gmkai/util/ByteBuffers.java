@@ -4,7 +4,7 @@ import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public interface ByteBufs {
+public interface ByteBuffers {
 
     static int getInt8(ByteBuffer m) throws IOException {
         verifyLength(m, 1);
@@ -20,7 +20,7 @@ public interface ByteBufs {
     static int getInt24(ByteBuffer m) throws IOException {
         verifyLength(m, 3);
         return ((m.get() & 0xFF) << 16) |
-                ((m.get() & 0xFF) <<  8) |
+                ((m.get() & 0xFF) << 8) |
                 (m.get() & 0xFF);
     }
 
@@ -28,7 +28,7 @@ public interface ByteBufs {
         verifyLength(m, 4);
         return ((m.get() & 0xFF) << 24) |
                 ((m.get() & 0xFF) << 16) |
-                ((m.get() & 0xFF) <<  8) |
+                ((m.get() & 0xFF) << 8) |
                 (m.get() & 0xFF);
     }
 
@@ -68,27 +68,27 @@ public interface ByteBufs {
      */
     static void putInt8(ByteBuffer m, int i) throws IOException {
         verifyLength(m, 1);
-        m.put((byte)(i & 0xFF));
+        m.put((byte) (i & 0xFF));
     }
 
     static void putInt16(ByteBuffer m, int i) throws IOException {
         verifyLength(m, 2);
-        m.put((byte)((i >> 8) & 0xFF));
-        m.put((byte)(i & 0xFF));
+        m.put((byte) ((i >> 8) & 0xFF));
+        m.put((byte) (i & 0xFF));
     }
 
     static void putInt24(ByteBuffer m, int i) throws IOException {
         verifyLength(m, 3);
-        m.put((byte)((i >> 16) & 0xFF));
-        m.put((byte)((i >> 8) & 0xFF));
-        m.put((byte)(i & 0xFF));
+        m.put((byte) ((i >> 16) & 0xFF));
+        m.put((byte) ((i >> 8) & 0xFF));
+        m.put((byte) (i & 0xFF));
     }
 
     static void putInt32(ByteBuffer m, int i) throws IOException {
-        m.put((byte)((i >> 24) & 0xFF));
-        m.put((byte)((i >> 16) & 0xFF));
-        m.put((byte)((i >> 8) & 0xFF));
-        m.put((byte)(i & 0xFF));
+        m.put((byte) ((i >> 24) & 0xFF));
+        m.put((byte) ((i >> 16) & 0xFF));
+        m.put((byte) ((i >> 8) & 0xFF));
+        m.put((byte) (i & 0xFF));
     }
 
     /*

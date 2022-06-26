@@ -7,7 +7,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 
-public class GMX509TrustManagerFactory  extends TrustManagerFactorySpi {
+public class GMX509TrustManagerFactory extends TrustManagerFactorySpi {
 
     @Override
     protected void engineInit(KeyStore ks) throws KeyStoreException {

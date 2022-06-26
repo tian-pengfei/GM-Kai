@@ -1,12 +1,16 @@
 package com.tianpengfei.gmkai;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum CipherSuite {
 
-
+    NULL("NULL",0x0000,null,null,null,null),
     ECDHE_SM4_CBC_SM3("ECDHE_SM4_CBC_SM3"
-                              , 0xe011
-                              ,ProtocolVersion.PROTOCOLS_OF_GMSSLs
-                              ,KeyExchange.ECDHE,CipherAlg.SM4_CBC,MacAlg.SM3);
+            , 0xe011
+            , ProtocolVersion.PROTOCOLS_OF_GMSSLs
+            , KeyExchange.ECDHE, CipherAlg.SM4_CBC, MacAlg.SM3);
 
     private final String name;
 
@@ -54,23 +58,49 @@ public enum CipherSuite {
         return macAlg;
     }
 
-    enum KeyExchange{
+
+    static String[] namesOf(List<CipherSuite> cipherSuites) {
+        String[] names = new String[cipherSuites.size()];
+        int i = 0;
+        for (CipherSuite cipherSuite : cipherSuites) {
+            names[i++] = cipherSuite.name;
+        }
+
+        return names;
+    }
+
+    static CipherSuite namesOf(String cipherSuite) {
+
+        return Arrays.stream(values()).filter(c-> c.name.equals(cipherSuite)
+        ).findFirst().orElse(NULL);
+    }
+
+    static List<CipherSuite> namesOf(String[] cipherSuites) {
+
+        return Arrays.stream(cipherSuites)
+                .map(CipherSuite::valueOf)
+                .collect(Collectors.toList());
+    }
+
+
+    enum KeyExchange {
 
         ECDHE("ECDHE"),
         ECC("ECC"),
         RSA("RSA");
 
-        private final String name ;
+        private final String name;
 
 
         KeyExchange(String name) {
             this.name = name;
         }
     }
-    enum CipherAlg{
+
+    enum CipherAlg {
         SM4_CBC("SM4_CBC"),
         SM4_GCM("SM4_CBC");
-        private final String name ;
+        private final String name;
 
 
         CipherAlg(String name) {
@@ -82,16 +112,17 @@ public enum CipherSuite {
         }
     }
 
-    enum MacAlg{
+    enum MacAlg {
         SM3("SM3"),
         SHA256("SHA256");
 
-        private final String name ;
+        private final String name;
 
 
         MacAlg(String name) {
             this.name = name;
         }
+
         public String getName() {
             return name;
         }

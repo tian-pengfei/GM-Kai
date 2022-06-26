@@ -6,7 +6,7 @@ import javax.net.ssl.ManagerFactoryParameters;
 import java.security.*;
 
 public class GMX509KeyManagerFactory extends KeyManagerFactorySpi {
-    
+
     @Override
     protected void engineInit(KeyStore ks, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
