@@ -14,11 +14,13 @@ public enum ProtocolVersion {
 
     final String name;
 
-
-
     final byte major;
 
     final byte minor;
+
+    public static final ProtocolVersion[] GM_PROTOCOLS = new ProtocolVersion[]{
+            GMSSL11
+    };
 
     ProtocolVersion(int id, String name) {
         this.id = id;
@@ -35,7 +37,7 @@ public enum ProtocolVersion {
         return name;
     }
 
-    static ProtocolVersion valueOf(byte major, byte minor) {
+    public static ProtocolVersion valueOf(byte major, byte minor) {
 
         for (ProtocolVersion pv : ProtocolVersion.values()) {
             if ((pv.major == major) && (pv.minor == minor)) {
@@ -46,7 +48,7 @@ public enum ProtocolVersion {
         return null;
     }
 
-    static ProtocolVersion valueOf(int id) {
+    public static ProtocolVersion valueOf(int id) {
         for (ProtocolVersion pv : ProtocolVersion.values()) {
             if (pv.id == id) {
                 return pv;
@@ -55,11 +57,11 @@ public enum ProtocolVersion {
         return null;
     }
 
-    static final ProtocolVersion[] PROTOCOLS_OF_GMSSLs = new ProtocolVersion[]{
+    public static final ProtocolVersion[] PROTOCOLS_OF_GMSSLs = new ProtocolVersion[]{
             GMSSL11
     };
 
-    static String nameOf(byte major, byte minor) throws SSLException {
+    public static String nameOf(byte major, byte minor) throws SSLException {
         for (ProtocolVersion pv : ProtocolVersion.values()) {
             if ((pv.major == major) && (pv.minor == minor)) {
                 return pv.name;
@@ -70,7 +72,7 @@ public enum ProtocolVersion {
     }
 
 
-    static String[] nameOf(List<ProtocolVersion> protocolVersions) {
+    public static String[] nameOf(List<ProtocolVersion> protocolVersions) {
         if ((protocolVersions != null) && !protocolVersions.isEmpty()) {
             String[] protocolNames = new String[protocolVersions.size()];
             int i = 0;
@@ -83,15 +85,17 @@ public enum ProtocolVersion {
 
         return new String[0];
     }
-    static ProtocolVersion valueof(String protocolVersion) {
+
+    public static ProtocolVersion valueof(String protocolVersion) {
         return Arrays.stream(values())
-                .filter(p->p.name.equals(protocolVersion))
+                .filter(p -> p.name.equals(protocolVersion))
                 .findFirst().orElse(NULL);
     }
-    static List<ProtocolVersion> nameOf(String[] protocolVersions) {
 
-       return  Arrays.stream(protocolVersions)
-               .map(ProtocolVersion::valueof)
-               .collect(Collectors.toList());
+    public static List<ProtocolVersion> nameOf(String[] protocolVersions) {
+
+        return Arrays.stream(protocolVersions)
+                .map(ProtocolVersion::valueof)
+                .collect(Collectors.toList());
     }
 }

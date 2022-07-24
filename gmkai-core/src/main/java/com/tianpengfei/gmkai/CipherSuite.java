@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public enum CipherSuite {
 
-    NULL("NULL",0x0000,null,null,null,null),
+    NULL("NULL", 0x0000, null, null, null, null),
     ECDHE_SM4_CBC_SM3("ECDHE_SM4_CBC_SM3"
             , 0xe011
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
@@ -71,7 +71,7 @@ public enum CipherSuite {
 
     static CipherSuite namesOf(String cipherSuite) {
 
-        return Arrays.stream(values()).filter(c-> c.name.equals(cipherSuite)
+        return Arrays.stream(values()).filter(c -> c.name.equals(cipherSuite)
         ).findFirst().orElse(NULL);
     }
 
@@ -82,6 +82,15 @@ public enum CipherSuite {
                 .collect(Collectors.toList());
     }
 
+    public static CipherSuite valueOf(int id) {
+        for (CipherSuite cs : CipherSuite.values()) {
+            if (cs.id == id) {
+                return cs;
+            }
+        }
+
+        return null;
+    }
 
     enum KeyExchange {
 

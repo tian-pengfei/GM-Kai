@@ -1,6 +1,6 @@
 package com.tianpengfei.gmkai;
 
-public interface SSLProducer<T extends ConnectionContext> {
+public interface SSLProducer<T extends ConnectionContext, R> {
 
-    void product(T t);
+    R produce(T t);
 }

@@ -4,11 +4,14 @@ import java.io.IOException;
 
 public abstract class HandshakeMessage {
 
-    HandshakeMessage(byte[] message){
+    HandshakeMessage(byte[] message) {
         parse(message);
     }
 
-    HandshakeMessage(){}
+    HandshakeMessage() {
+    }
+
+    abstract byte[] getHandshakeType();
 
     abstract byte[] getBytes() throws IOException;
 
