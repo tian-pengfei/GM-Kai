@@ -1,6 +1,8 @@
 package com.tianpengfei.gmkai.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public interface Bytes {
 
@@ -23,4 +25,11 @@ public interface Bytes {
     }
 
 
+    static byte[] combine(byte[] ... datas) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (byte[] data : datas) {
+            outputStream.write(data);
+        }
+        return outputStream.toByteArray();
+    }
 }

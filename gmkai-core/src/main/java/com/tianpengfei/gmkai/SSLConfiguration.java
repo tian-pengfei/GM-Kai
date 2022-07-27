@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-final class SSLConfiguration {
+public final class SSLConfiguration {
 
 
     // configurations with SSLParameters

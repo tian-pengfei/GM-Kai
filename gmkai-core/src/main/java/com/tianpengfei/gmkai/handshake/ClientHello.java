@@ -3,6 +3,7 @@ package com.tianpengfei.gmkai.handshake;
 
 import com.google.common.collect.Lists;
 import com.tianpengfei.gmkai.CipherSuite;
+import com.tianpengfei.gmkai.CompressionMethod;
 import com.tianpengfei.gmkai.GMSSLSession;
 import com.tianpengfei.gmkai.ProtocolVersion;
 import com.tianpengfei.gmkai.util.ByteBuffers;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -21,9 +23,9 @@ import java.util.List;
 
 public class ClientHello {
 
-    static final HandshakeProducer handshakeProducer = null;
+    static final HandshakeProducer handshakeProducer = new ClientHelloProducer();
 
-    static final HandshakeConsumer handshakeConsumer = null;
+    static final HandshakeConsumer handshakeConsumer = new ClientHelloConsumer();
 
 
     static final class ClientRandom {
@@ -57,44 +59,6 @@ public class ClientHello {
         }
     }
 
-    static final class CompressionMethod {
-
-        private final int value;
-
-        public CompressionMethod(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            switch (value) {
-                case 0:
-                    return "null";
-                case 1:
-                    return "zlib";
-                default:
-                    return "unknown(" + value + ")";
-            }
-        }
-
-        static final CompressionMethod NULL = new CompressionMethod(0);
-        static final CompressionMethod ZLIB = new CompressionMethod(1);
-
-        public static CompressionMethod getInstance(int value) {
-            switch (value) {
-                case 0:
-                    return NULL;
-                case 1:
-                    return ZLIB;
-                default:
-                    return new CompressionMethod(value);
-            }
-        }
-    }
 
 
     static final class ClientHelloMessage extends HandshakeMessage {
@@ -106,12 +70,10 @@ public class ClientHello {
         private final List<CompressionMethod> compressionMethods;
 
 
-        private HandshakeContext handshakeContext;
 
-        ClientHelloMessage(HandshakeContext handshakeContext, ProtocolVersion version, byte[] random,
+        ClientHelloMessage(ProtocolVersion version, byte[] random,
                            byte[] sessionId, List<CipherSuite> cipherSuites) {
 
-            this.handshakeContext = handshakeContext;
             this.version = version;
             this.compressionMethods = Lists.newArrayList(CompressionMethod.NULL);
             this.sessionId = sessionId;
@@ -120,19 +82,19 @@ public class ClientHello {
 
         }
 
-        public ClientHelloMessage(HandshakeContext handshakeContext, ByteBuffer message) throws IOException {
+        public ClientHelloMessage(ByteBuffer m) throws IOException {
 
-            this.version = ProtocolVersion.valueOf(((message.get() & 0xFF) << 8) | (message.get() & 0xFF));
+            this.version = ProtocolVersion.valueOf(ByteBuffers.getInt16(m));
             if (this.version == null) {
                 throw new SSLException("");
             }
             this.random = new byte[32];
-            message.get(random);
+            m.get(random);
 
-            this.sessionId = ByteBuffers.getBytes8(message);
+            this.sessionId = ByteBuffers.getBytes8(m);
 
 
-            byte[] encodedIds = ByteBuffers.getBytes16(message);
+            byte[] encodedIds = ByteBuffers.getBytes16(m);
             if (encodedIds.length == 0 || (encodedIds.length & 0x01) != 0) {
                 throw new SSLException("Invalid ClientHello message");
             }
@@ -144,7 +106,7 @@ public class ClientHello {
                 }
             }
 
-            encodedIds = ByteBuffers.getBytes8(message);
+            encodedIds = ByteBuffers.getBytes8(m);
             if (encodedIds.length == 0) {
                 throw new SSLException("Invalid ClientHello message");
             }
@@ -174,12 +136,12 @@ public class ClientHello {
 
 
         @Override
-        byte[] getHandshakeType() {
-            return new byte[0];
+        public SSLHandshakeType getHandshakeType() {
+            return SSLHandshakeType.CLIENT_HELLO;
         }
 
         @Override
-        byte[] getBytes() throws IOException {
+        public byte[] getBytes() throws IOException {
 
             byte[] message = new byte[messageLength()];
             ByteBuffer m = ByteBuffer.wrap(message);
@@ -204,11 +166,6 @@ public class ClientHello {
         }
 
         @Override
-        void parse(byte[] messages) {
-
-        }
-
-        @Override
         int messageLength() {
 
             return 2 + random.length + 1 + sessionId.length + 2 + suites.size() * 2
@@ -223,7 +180,7 @@ public class ClientHello {
         @Override
         public void consume(HandshakeContext handshakeContext, ByteBuffer message) throws IOException {
 
-            ClientHelloMessage clientHello = new ClientHelloMessage(handshakeContext, message);
+            ClientHelloMessage clientHello = new ClientHelloMessage(message);
 
             handshakeContext.negotiatedProtocol = negotiateProtocol(handshakeContext, clientHello.version);
 
@@ -259,6 +216,12 @@ public class ClientHello {
             }
             throw new SSLException("不支持此协议版本");
         }
+
+        @Override
+        public SSLHandshakeType handshakeType() {
+
+            return SSLHandshakeType.CLIENT_HELLO;
+        }
     }
 
     private static final class ClientHelloProducer implements HandshakeProducer {
@@ -266,7 +229,17 @@ public class ClientHello {
         @Override
         public HandshakeMessage produce(HandshakeContext handshakeContext) {
 
-            return null;
+            byte[] clientRandom = new byte[32];
+            SecureRandom secureRandom = new SecureRandom();
+            secureRandom.nextBytes(clientRandom);
+
+            ClientHelloMessage clientHelloMessage = new ClientHelloMessage(
+               handshakeContext.maxProtocolVersion,
+                    clientRandom,new byte[0],handshakeContext.activeCipherSuites
+            );
+
+            handshakeContext.clientRandom = clientRandom;
+            return clientHelloMessage;
         }
     }
 

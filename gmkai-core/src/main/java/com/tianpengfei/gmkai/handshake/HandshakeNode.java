@@ -20,7 +20,18 @@ public class HandshakeNode implements HandshakeConsumer, HandshakeProducer {
     }
 
     @Override
-    public HandshakeMessage produce(HandshakeContext handshakeContext) {
+    public HandshakeMessage produce(HandshakeContext handshakeContext) throws IOException {
         return this.handshakeProducer.produce(handshakeContext);
+    }
+
+
+    @Override
+    public boolean isNeed(HandshakeContext context) {
+        return true;
+    }
+
+    @Override
+    public SSLHandshakeType handshakeType() {
+        return null;
     }
 }

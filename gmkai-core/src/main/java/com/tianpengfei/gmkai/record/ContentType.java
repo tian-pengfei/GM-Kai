@@ -3,6 +3,8 @@ package com.tianpengfei.gmkai.record;
 
 import com.tianpengfei.gmkai.ProtocolVersion;
 
+import java.util.Arrays;
+
 public enum ContentType {
 
     CHANGE_CIPHER_SPEC((byte) 20, "change_cipher_spec",
@@ -27,5 +29,10 @@ public enum ContentType {
         this.id = id;
         this.name = name;
         this.supportedProtocols = supportedProtocols;
+    }
+
+    public static ContentType valueOf(int id){
+        return Arrays.stream(ContentType.values()).filter(contentType -> contentType.id==id).findFirst()
+                .orElse(null);
     }
 }

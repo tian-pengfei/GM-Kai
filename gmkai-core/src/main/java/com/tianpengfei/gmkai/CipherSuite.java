@@ -10,7 +10,13 @@ public enum CipherSuite {
     ECDHE_SM4_CBC_SM3("ECDHE_SM4_CBC_SM3"
             , 0xe011
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
-            , KeyExchange.ECDHE, CipherAlg.SM4_CBC, MacAlg.SM3);
+            , KeyExchange.ECDHE, CipherAlg.SM4_CBC, MacAlg.SM3),
+
+
+    ECC_SM4_CBC_SM3("ECC_SM4_CBC_SM3"
+                              , 0xe0e3
+                              , ProtocolVersion.PROTOCOLS_OF_GMSSLs
+            , KeyExchange.ECC, CipherAlg.SM4_CBC, MacAlg.SM3);
 
     private final String name;
 

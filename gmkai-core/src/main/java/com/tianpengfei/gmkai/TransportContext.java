@@ -4,6 +4,7 @@ import com.tianpengfei.gmkai.handshake.HandshakeContext;
 import com.tianpengfei.gmkai.record.ContentType;
 import com.tianpengfei.gmkai.record.Plaintext;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -11,9 +12,11 @@ public class TransportContext implements ConnectionContext {
 
     TransportContextSpi transportContextSpi;
 
+    boolean                         isNegotiated = false;
+
     HandshakeContext handshakeContext;
 
-    void kickStart() {
+    void kickStart() throws IOException {
         handshakeContext.kickstart(this);
     }
 
@@ -38,7 +41,12 @@ public class TransportContext implements ConnectionContext {
         return null;
     }
 
+
     public void writeRecord(ContentType contentType, byte[] message) {
 
     }
+    public boolean isNegotiated(){
+        return this.isNegotiated;
+    }
+
 }
