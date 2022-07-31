@@ -1,5 +1,7 @@
 package com.tianpengfei.gmkai;
 
+import com.google.common.collect.Lists;
+
 import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.SecureRandom;
@@ -33,8 +35,23 @@ public class GMSSLContextSpi extends SSLContextSpi {
     }
 
 
+    GMContextData contextData;
+
     @Override
     protected void engineInit(KeyManager[] km, TrustManager[] tm, SecureRandom sr) throws KeyManagementException {
+
+        GMX509KeyManager keyManager = (GMX509KeyManager) Arrays.stream(tm)
+                .filter(trustManager1 -> trustManager1 instanceof GMX509KeyManager).
+                        findFirst().orElse(null);
+
+        GMX509TrustManager trustManager = (GMX509TrustManager) Arrays.stream(tm)
+                .filter(trustManager1 -> trustManager1 instanceof GMX509TrustManager)
+                .findFirst().orElse(null);
+        GMSessionContext clientSessionContext = new GMSessionContext();
+        GMSessionContext serverSessionContext = new GMSessionContext();
+
+        contextData = new GMContextData(this, keyManager, trustManager, clientSessionContext, serverSessionContext);
+
 
     }
 
@@ -60,11 +77,34 @@ public class GMSSLContextSpi extends SSLContextSpi {
 
     @Override
     protected SSLSessionContext engineGetServerSessionContext() {
-        return null;
+        return contextData.getServerSessionContext();
     }
 
     @Override
     protected SSLSessionContext engineGetClientSessionContext() {
-        return null;
+        return contextData.getClientSessionContext();
+    }
+
+
+    List<CipherSuite> getDefaultCipherSuites(boolean isClient) {
+        return Lists.newArrayList(CipherSuite.ECC_SM4_CBC_SM3);
+    }
+
+    List<ProtocolVersion> getDefaultProtocols(boolean isClient) {
+        return Lists.newArrayList(ProtocolVersion.GMSSL11);
+    }
+
+    List<CipherSuite> getSupportedCipherSuites() {
+        return Lists.newArrayList(CipherSuite.ECC_SM4_CBC_SM3);
+    }
+
+    GMSSLParameters getSupportedSSLParameters(boolean isClient) {
+
+        return new GMSSLParameters(this, getDefaultProtocols(isClient), getDefaultCipherSuites(isClient));
+    }
+
+
+    public List<ProtocolVersion> getSupportedProtocols(boolean isClientMode) {
+        return Lists.newArrayList(ProtocolVersion.GMSSL11);
     }
 }

@@ -5,7 +5,6 @@ import com.tianpengfei.gmkai.ProtocolVersion;
 public class Plaintext {
 
 
-
     ContentType contentType;
 
     ProtocolVersion version;

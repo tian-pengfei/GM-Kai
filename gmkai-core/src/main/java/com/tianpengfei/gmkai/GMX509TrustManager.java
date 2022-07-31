@@ -20,4 +20,5 @@ public class GMX509TrustManager implements X509TrustManager {
     public X509Certificate[] getAcceptedIssuers() {
         return new X509Certificate[0];
     }
+
 }

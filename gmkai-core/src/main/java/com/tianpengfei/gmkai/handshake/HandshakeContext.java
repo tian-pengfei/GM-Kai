@@ -22,7 +22,9 @@ public class HandshakeContext implements ConnectionContext {
 
     TransportContext transportContext;
 
-    SSLContext sslContext;
+    GMContextData contextData;
+
+    GMSSLParameters gmsslParameters;
 
     ProtocolVersion maxProtocolVersion = ProtocolVersion.GMSSL11;
 
@@ -45,19 +47,15 @@ public class HandshakeContext implements ConnectionContext {
 
     byte[] preMasterSecret;
 
-    byte[] masterSecret;
-
     boolean isProtocolNegotiated = false;
 
     ProtocolVersion negotiatedProtocol;
 
     CipherSuite negotiatedCipherSuite;
 
-    boolean                         isNegotiated = false;
+    boolean isNegotiated = false;
 
     boolean isRead = false;
-
-    SSLConfiguration sslConfiguration;
 
     X509Certificate[] peerCerts;
 
@@ -72,12 +70,12 @@ public class HandshakeContext implements ConnectionContext {
 
     public void kickstart(TransportContext tc) throws IOException {
 
-        protocolNegotiator.kickstart(tc,this);
+        protocolNegotiator.kickstart(tc, this);
 
-        while(!isNegotiated){
-            if(isRead){
+        while (!isNegotiated) {
+            if (isRead) {
                 readHandshakeMessage();
-            }else {
+            } else {
                 writeHandshakeMessage();
             }
         }
@@ -97,13 +95,13 @@ public class HandshakeContext implements ConnectionContext {
 
         SSLHandshakeType sht = SSLHandshakeType.valueOf(hm.get());
 
-        HandshakeConsumer  hc = consumers.remove(0);
-        while (hc.isNeed(this)){
+        HandshakeConsumer hc = consumers.remove(0);
+        while (hc.isNeed(this)) {
             hc = consumers.remove(0);
         }
 
-        if(sht==hc.handshakeType()){
-            hc.consume(this,hm);
+        if (sht == hc.handshakeType()) {
+            hc.consume(this, hm);
         }
         consumers.remove(0).consume(this, hm);
 
@@ -113,15 +111,15 @@ public class HandshakeContext implements ConnectionContext {
 
         HandshakeProducer handshakeProducer = producers.remove(0);
 
-        while(!handshakeProducer.isNeed(this)){
+        while (!handshakeProducer.isNeed(this)) {
             handshakeProducer = producers.remove(0);
         }
 
         HandshakeMessage hm = handshakeProducer.produce(this);
 
-        ByteBuffer m = ByteBuffer.allocate(1+3+hm.messageLength());
+        ByteBuffer m = ByteBuffer.allocate(1 + 3 + hm.messageLength());
         m.put(hm.getHandshakeType().id);
-        ByteBuffers.putBytes24(m,hm.getBytes());
+        ByteBuffers.putBytes24(m, hm.getBytes());
         transportContext.writeRecord(ContentType.APPLICATION_DATA, m.array());
 
         handshakeProducer.finished();
@@ -133,25 +131,25 @@ public class HandshakeContext implements ConnectionContext {
      * 握手中读的任务暂时结束，开启写任务。
      */
 
-    void readFinished(){
+    void readFinished() {
 
         isRead = false;
     }
 
     /**
      * 握手中写的任务暂时结束，开启都任务。
-     *   比如TLS握手过程中发送一个ServerHelloDone消息表明写任务结束，开启读任务。
-     *   发送Finished但是没有收到对方的FINISHED任务，表明写任务结束开启读任务
+     * 比如TLS握手过程中发送一个ServerHelloDone消息表明写任务结束，开启读任务。
+     * 发送Finished但是没有收到对方的FINISHED任务，表明写任务结束开启读任务
      **/
-     void writeFinished(){
-         isRead = true;
-     }
+    void writeFinished() {
+        isRead = true;
+    }
 
     /**
      * 握手结束
-     *  比如TLS握手过程中 收到一个FINISHED 消息并且发送一个FINISHED这两个条件同时满足的话，表明握手结束。
+     * 比如TLS握手过程中 收到一个FINISHED 消息并且发送一个FINISHED这两个条件同时满足的话，表明握手结束。
      */
-    void handshakeFinished(){
+    void handshakeFinished() {
         isNegotiated = true;
     }
 

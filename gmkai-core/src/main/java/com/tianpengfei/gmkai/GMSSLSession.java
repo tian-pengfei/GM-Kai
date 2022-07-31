@@ -1,17 +1,87 @@
 package com.tianpengfei.gmkai;
 
+import javax.crypto.SecretKey;
 import javax.net.ssl.ExtendedSSLSession;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSessionContext;
 import javax.security.cert.X509Certificate;
 import java.security.Principal;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.List;
 
 public class GMSSLSession extends ExtendedSSLSession {
 
+    private ProtocolVersion protocolVersion;
+
+    byte[] sessionId;
+
+    private Certificate[] peerCerts;
+
+    private CipherSuite cipherSuite;
+
+    private SecretKey masterSecret;
+
+    private long creationTime;
+
+    private long lastUsedTime = 0;
+
+    private String host;
+
+    private int port;
+
+    private Principal peerPrincipal;
+
+
+    private GMSessionContext context;
+
+    private boolean invalidated = false;
+
+    private Certificate[] localCerts;
+
+    private Principal localPrincipal;
+
+    private PrivateKey[] localPrivateKeys;
+
+    private String[] peerSupportedSignAlgs;      // for certificate
+
+    private boolean useDefaultPeerSignAlgs = false;
+
+    private List<byte[]> statusResponses;
+
+    private SecretKey resumptionMasterSecret;
+
+    private byte[] pskIdentity;
+
+    private final long ticketCreationTime = System.currentTimeMillis();
+
+    private int ticketAgeAdd;
+
+    private int negotiatedMaxFragLen = -1;
+
+    private int maximumPacketSize;
+
+    public GMSSLSession(ProtocolVersion protocolVersion, byte[] sessionId,
+                        String host, int port, Certificate[] localCerts, PrivateKey[] localPrivateKeys) {
+        this.sessionId = sessionId;
+        this.protocolVersion = protocolVersion;
+        this.host = host;
+        this.port = port;
+        this.localCerts = localCerts;
+        this.localPrivateKeys = localPrivateKeys;
+    }
+
+    public GMSSLSession(ProtocolVersion protocolVersion, byte[] sessionId,
+                        String host, int port) {
+        this.sessionId = sessionId;
+        this.protocolVersion = protocolVersion;
+        this.host = host;
+        this.port = port;
+    }
+
     @Override
     public byte[] getId() {
-        return new byte[0];
+        return sessionId;
     }
 
     @Override
@@ -21,92 +91,93 @@ public class GMSSLSession extends ExtendedSSLSession {
 
     @Override
     public long getCreationTime() {
-        return 0;
+        return creationTime;
     }
 
     @Override
     public long getLastAccessedTime() {
-        return 0;
+        return lastUsedTime;
     }
 
     @Override
     public void invalidate() {
-
+        this.invalidated = true;
     }
 
     @Override
     public boolean isValid() {
-        return false;
+        return !invalidated;
     }
 
     @Override
     public void putValue(String name, Object value) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object getValue(String name) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void removeValue(String name) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String[] getValueNames() {
-        return new String[0];
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Certificate[] getPeerCertificates() throws SSLPeerUnverifiedException {
-        return new Certificate[0];
+
+        return peerCerts;
     }
 
     @Override
     public Certificate[] getLocalCertificates() {
-        return new Certificate[0];
+        return localCerts;
     }
 
     @Override
     public X509Certificate[] getPeerCertificateChain() throws SSLPeerUnverifiedException {
-        return new X509Certificate[0];
+        return null;
     }
 
     @Override
     public Principal getPeerPrincipal() throws SSLPeerUnverifiedException {
-        return null;
+        return peerPrincipal;
     }
 
     @Override
     public Principal getLocalPrincipal() {
-        return null;
+        return localPrincipal;
     }
 
     @Override
     public String getCipherSuite() {
-        return null;
+        return this.cipherSuite.getName();
     }
 
     @Override
     public String getProtocol() {
-        return null;
+        return this.protocolVersion.getName();
     }
 
     @Override
     public String getPeerHost() {
-        return null;
+        return this.host;
     }
 
     @Override
     public int getPeerPort() {
-        return 0;
+        return this.port;
     }
 
     @Override
     public int getPacketBufferSize() {
-        return 0;
+        return maximumPacketSize;
     }
 
     @Override
@@ -123,4 +194,6 @@ public class GMSSLSession extends ExtendedSSLSession {
     public String[] getPeerSupportedSignatureAlgorithms() {
         return new String[0];
     }
+
+
 }

@@ -60,7 +60,6 @@ public class ClientHello {
     }
 
 
-
     static final class ClientHelloMessage extends HandshakeMessage {
 
         private final ProtocolVersion version;
@@ -68,7 +67,6 @@ public class ClientHello {
         private final byte[] sessionId;
         private final List<CipherSuite> suites;
         private final List<CompressionMethod> compressionMethods;
-
 
 
         ClientHelloMessage(ProtocolVersion version, byte[] random,
@@ -188,7 +186,10 @@ public class ClientHello {
                 //复用session
 
             } else {
-                handshakeContext.handshakeSession = new GMSSLSession();
+                SecureRandom random = new SecureRandom();
+                handshakeContext.handshakeSession =
+                        new GMSSLSession(handshakeContext.negotiatedProtocol, random.generateSeed(64),
+                                "", -1);
             }
 
             handshakeContext.clientRandom = clientHello.random;
@@ -234,8 +235,8 @@ public class ClientHello {
             secureRandom.nextBytes(clientRandom);
 
             ClientHelloMessage clientHelloMessage = new ClientHelloMessage(
-               handshakeContext.maxProtocolVersion,
-                    clientRandom,new byte[0],handshakeContext.activeCipherSuites
+                    handshakeContext.maxProtocolVersion,
+                    clientRandom, new byte[0], handshakeContext.activeCipherSuites
             );
 
             handshakeContext.clientRandom = clientRandom;

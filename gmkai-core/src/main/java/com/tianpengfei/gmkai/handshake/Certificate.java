@@ -23,7 +23,7 @@ public class Certificate {
 
     static final SSLHandshakeType TYPE = SSLHandshakeType.CERTIFICATE;
 
-    static class CertificateMessage extends HandshakeMessage{
+    static class CertificateMessage extends HandshakeMessage {
 
         final List<byte[]> encodedCertChain;
 
@@ -52,7 +52,7 @@ public class Certificate {
                 }
                 this.encodedCertChain = encodedCerts;
 
-            }else{
+            } else {
                 this.encodedCertChain = Collections.emptyList();
             }
         }
@@ -68,18 +68,18 @@ public class Certificate {
             byte[] message = new byte[messageLength()];
             ByteBuffer m = ByteBuffer.wrap(message);
 
-            ByteBuffers.putInt24(m,messageLength()-3);
+            ByteBuffers.putInt24(m, messageLength() - 3);
             for (byte[] cert : encodedCertChain) {
-                ByteBuffers.putBytes24(m,cert);
+                ByteBuffers.putBytes24(m, cert);
             }
 
-            return  message;
+            return message;
         }
 
         @Override
         int messageLength() {
 
-            int msgLen =3;
+            int msgLen = 3;
             msgLen += encodedCertChain
                     .stream().mapToInt(encodedCert -> encodedCert.length).sum();
             return msgLen;
@@ -87,7 +87,7 @@ public class Certificate {
     }
 
 
-    static class CertificateProducer implements HandshakeProducer{
+    static class CertificateProducer implements HandshakeProducer {
 
         @Override
         public HandshakeMessage produce(HandshakeContext handshakeContext) {
@@ -101,20 +101,20 @@ public class Certificate {
         }
     }
 
-    static  class CertificateConsumer implements HandshakeConsumer{
+    static class CertificateConsumer implements HandshakeConsumer {
 
         @Override
         public void consume(HandshakeContext handshakeContext, ByteBuffer message) throws IOException {
 
             CertificateMessage certificateMessage = new CertificateMessage(message);
             List<byte[]> encodedCerts = certificateMessage.encodedCertChain;
-            X509Certificate[] x509Certs =new X509Certificate[encodedCerts.size()];
+            X509Certificate[] x509Certs = new X509Certificate[encodedCerts.size()];
 
             try {
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 int i = 0;
                 for (byte[] encodedCert : encodedCerts) {
-                    x509Certs[i++] = (X509Certificate)cf.generateCertificate(
+                    x509Certs[i++] = (X509Certificate) cf.generateCertificate(
                             new ByteArrayInputStream(encodedCert));
                 }
             } catch (CertificateException ce) {

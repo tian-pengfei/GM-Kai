@@ -25,7 +25,7 @@ public interface Bytes {
     }
 
 
-    static byte[] combine(byte[] ... datas) throws IOException {
+    static byte[] combine(byte[]... datas) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         for (byte[] data : datas) {
             outputStream.write(data);

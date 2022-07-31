@@ -14,65 +14,66 @@ import java.security.cert.X509Certificate;
 public class ServerKeyExchange {
 
 
-        static final HandshakeProducer handshakeProducer = new ServerKeyExchangeProducer();
+    static final HandshakeProducer handshakeProducer = new ServerKeyExchangeProducer();
 
-        static final HandshakeConsumer handshakeConsumer = new ServerKeyExchangeConsumer();
+    static final HandshakeConsumer handshakeConsumer = new ServerKeyExchangeConsumer();
 
-        static final SSLHandshakeType TYPE = SSLHandshakeType.SERVER_KEY_EXCHANGE;
+    static final SSLHandshakeType TYPE = SSLHandshakeType.SERVER_KEY_EXCHANGE;
 
-        static class ServerKeyExchangeMessage extends HandshakeMessage{
+    static class ServerKeyExchangeMessage extends HandshakeMessage {
 
-            public byte[] signature;
+        public byte[] signature;
 
-            ServerKeyExchangeMessage(ByteBuffer message) throws IOException {
-                signature = ByteBuffers.getBytes16(message);
-            }
-            @Override
-            SSLHandshakeType getHandshakeType() {
-                return TYPE;
-            }
-
-            @Override
-            byte[] getBytes() throws IOException {
-                ByteBuffer m = ByteBuffer.allocate(messageLength());
-                ByteBuffers.putBytes16(m,signature);
-                return m.array();
-            }
-
-            @Override
-            int messageLength() {
-                return 2+signature.length;
-            }
+        ServerKeyExchangeMessage(ByteBuffer message) throws IOException {
+            signature = ByteBuffers.getBytes16(message);
         }
 
+        @Override
+        SSLHandshakeType getHandshakeType() {
+            return TYPE;
+        }
 
-        static  class  ServerKeyExchangeProducer implements  HandshakeProducer{
+        @Override
+        byte[] getBytes() throws IOException {
+            ByteBuffer m = ByteBuffer.allocate(messageLength());
+            ByteBuffers.putBytes16(m, signature);
+            return m.array();
+        }
 
-            @Override
-            public HandshakeMessage produce(HandshakeContext handshakeContext) throws SSLException {
+        @Override
+        int messageLength() {
+            return 2 + signature.length;
+        }
+    }
 
-                //验证签名
 
-                // signature cert
-                X509Certificate signCert = handshakeContext.peerCerts[0];
-                // encryption cert
-                X509Certificate encryptionCert = handshakeContext.peerCerts[1];
-                byte[] src;
-                try {
-                    src = Bytes.combine(
-                            handshakeContext.clientRandom,
-                            handshakeContext.serverRandom,
-                            encryptionCert.getEncoded());
-                } catch (CertificateEncodingException | IOException e) {
-                    throw new SSLException("");
-                }
+    static class ServerKeyExchangeProducer implements HandshakeProducer {
+
+        @Override
+        public HandshakeMessage produce(HandshakeContext handshakeContext) throws SSLException {
+
+            //验证签名
+
+            // signature cert
+            X509Certificate signCert = handshakeContext.peerCerts[0];
+            // encryption cert
+            X509Certificate encryptionCert = handshakeContext.peerCerts[1];
+            byte[] src;
+            try {
+                src = Bytes.combine(
+                        handshakeContext.clientRandom,
+                        handshakeContext.serverRandom,
+                        encryptionCert.getEncoded());
+            } catch (CertificateEncodingException | IOException e) {
+                throw new SSLException("");
+            }
 //                byte[] signature  = SM2Util.sign()
-                return null;
+            return null;
 
-            }
         }
+    }
 
-    static class ServerKeyExchangeConsumer implements HandshakeConsumer{
+    static class ServerKeyExchangeConsumer implements HandshakeConsumer {
 
         @Override
         public void consume(HandshakeContext handshakeContext, ByteBuffer message) throws IOException {
@@ -95,7 +96,7 @@ public class ServerKeyExchange {
             }
 
 
-            SM2Util.verify((BCECPublicKey) signCert.getPublicKey(),src,serverKeyExchangeMessage.signature );
+            SM2Util.verify((BCECPublicKey) signCert.getPublicKey(), src, serverKeyExchangeMessage.signature);
 
         }
 

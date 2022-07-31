@@ -26,7 +26,7 @@ public class ServerHelloDone {
         }
     }
 
-    static class ServerHelloConsumer implements HandshakeConsumer{
+    static class ServerHelloConsumer implements HandshakeConsumer {
 
         @Override
         public void consume(HandshakeContext handshakeContext, ByteBuffer message) throws IOException {
@@ -41,7 +41,8 @@ public class ServerHelloDone {
 
 
     }
-    static class ServerHelloProducer implements HandshakeProducer{
+
+    static class ServerHelloProducer implements HandshakeProducer {
 
         @Override
         public HandshakeMessage produce(HandshakeContext handshakeContext) {

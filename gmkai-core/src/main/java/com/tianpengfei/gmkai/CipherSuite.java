@@ -14,8 +14,8 @@ public enum CipherSuite {
 
 
     ECC_SM4_CBC_SM3("ECC_SM4_CBC_SM3"
-                              , 0xe0e3
-                              , ProtocolVersion.PROTOCOLS_OF_GMSSLs
+            , 0xe0e3
+            , ProtocolVersion.PROTOCOLS_OF_GMSSLs
             , KeyExchange.ECC, CipherAlg.SM4_CBC, MacAlg.SM3);
 
     private final String name;

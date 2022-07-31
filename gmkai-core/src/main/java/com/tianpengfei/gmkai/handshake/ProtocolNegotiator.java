@@ -15,10 +15,9 @@ import java.nio.ByteBuffer;
 public class ProtocolNegotiator {
 
 
+    public void kickstart(TransportContext tc, HandshakeContext handshakeContext) throws IOException {
 
-    public void kickstart(TransportContext tc,HandshakeContext handshakeContext) throws IOException {
-
-        if(handshakeContext.sslConfiguration.getUseClientMode()){
+        if (handshakeContext.sslConfiguration.getUseClientMode()) {
 
             ClientHello.handshakeProducer.produce(handshakeContext);
 
@@ -26,30 +25,30 @@ public class ProtocolNegotiator {
 
             ByteBuffer message = ByteBuffer.wrap(plaintext.fragment);
 
-            if(plaintext.getContentType()== ContentType.HANDSHAKE){
+            if (plaintext.getContentType() == ContentType.HANDSHAKE) {
 
                 SSLHandshakeType sht = SSLHandshakeType.valueOf(message.get());
 
-                if(sht == SSLHandshakeType.SERVER_HELLO){
+                if (sht == SSLHandshakeType.SERVER_HELLO) {
 
-                    ServerHello.handshakeConsumer.consume(handshakeContext,message);
+                    ServerHello.handshakeConsumer.consume(handshakeContext, message);
                     //消耗成功后，就根据协商的参数就开始组装后面的协议。
                     packageHandshake(handshakeContext);
 
-                }else{
+                } else {
                     throw new SSLException("");
                 }
 
-            }else if(plaintext.getContentType()==ContentType.ALERT){
+            } else if (plaintext.getContentType() == ContentType.ALERT) {
                 throw new SSLException("");
-            }else if(plaintext.getContentType()==ContentType.APPLICATION_DATA){
+            } else if (plaintext.getContentType() == ContentType.APPLICATION_DATA) {
                 throw new SSLException("");
-            }else{
+            } else {
                 throw new SSLException("");
             }
 
 
-        }else {
+        } else {
             //TLS1.2 服务端在建立连接的情况下可以发起重新握手，消息类型为 Hello Request
             //在没有建立连接的情况下直接进行信息的读取
 
@@ -77,7 +76,7 @@ public class ProtocolNegotiator {
     }
 
 
-    private void packageHandshake(HandshakeContext handshakeContext){
+    private void packageHandshake(HandshakeContext handshakeContext) {
 
 
     }

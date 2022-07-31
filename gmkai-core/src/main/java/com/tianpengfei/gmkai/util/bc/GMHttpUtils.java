@@ -1,6 +1,6 @@
 package com.tianpengfei.gmkai.util.bc;
 
-import cn.com.agree.ab.a5.runtime.gmssl.util.bc.cert.SM2CertUtil;
+import com.tianpengfei.gmkai.util.bc.cert.SM2CertUtil;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DEROctetString;

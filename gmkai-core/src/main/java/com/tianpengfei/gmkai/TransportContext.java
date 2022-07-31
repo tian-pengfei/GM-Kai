@@ -12,7 +12,7 @@ public class TransportContext implements ConnectionContext {
 
     TransportContextSpi transportContextSpi;
 
-    boolean                         isNegotiated = false;
+    boolean isNegotiated = false;
 
     HandshakeContext handshakeContext;
 
@@ -45,7 +45,8 @@ public class TransportContext implements ConnectionContext {
     public void writeRecord(ContentType contentType, byte[] message) {
 
     }
-    public boolean isNegotiated(){
+
+    public boolean isNegotiated() {
         return this.isNegotiated;
     }
 

@@ -31,8 +31,8 @@ public enum ContentType {
         this.supportedProtocols = supportedProtocols;
     }
 
-    public static ContentType valueOf(int id){
-        return Arrays.stream(ContentType.values()).filter(contentType -> contentType.id==id).findFirst()
+    public static ContentType valueOf(int id) {
+        return Arrays.stream(ContentType.values()).filter(contentType -> contentType.id == id).findFirst()
                 .orElse(null);
     }
 }

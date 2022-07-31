@@ -19,7 +19,7 @@ public class ServerHello {
     static final SSLHandshakeType type = SSLHandshakeType.SERVER_HELLO;
 
 
-    static class ServerHelloMessage  extends HandshakeMessage{
+    static class ServerHelloMessage extends HandshakeMessage {
 
         private final ProtocolVersion serverVersion;
 
@@ -32,7 +32,7 @@ public class ServerHello {
         private final CompressionMethod compressionMethod;
 
         ServerHelloMessage(ProtocolVersion serverVersion,
-                           byte[] serverRandom, byte[] sessionId, CipherSuite cipherSuite){
+                           byte[] serverRandom, byte[] sessionId, CipherSuite cipherSuite) {
             this.serverVersion = serverVersion;
             this.serverRandom = serverRandom;
             this.sessionId = sessionId;
@@ -64,24 +64,23 @@ public class ServerHello {
 
             ByteBuffer m = ByteBuffer.allocate(messageLength());
 
-            ByteBuffers.putInt8(m,serverVersion.getId());
+            ByteBuffers.putInt8(m, serverVersion.getId());
             m.put(serverRandom);
-            ByteBuffers.putBytes8(m,sessionId);
-            ByteBuffers.putInt16(m,cipherSuite.getId());
-            ByteBuffers.putInt8(m,compressionMethod.getValue());
+            ByteBuffers.putBytes8(m, sessionId);
+            ByteBuffers.putInt16(m, cipherSuite.getId());
+            ByteBuffers.putInt8(m, compressionMethod.getValue());
 
             return m.array();
         }
 
         @Override
         int messageLength() {
-            return 2+32+1+sessionId.length+2+1;
+            return 2 + 32 + 1 + sessionId.length + 2 + 1;
         }
     }
 
 
-
-    static class ServerHelloProducer implements HandshakeProducer{
+    static class ServerHelloProducer implements HandshakeProducer {
 
         @Override
         public HandshakeMessage produce(HandshakeContext handshakeContext) {
@@ -93,19 +92,19 @@ public class ServerHello {
 
             ServerHelloMessage serverHelloMessage =
                     new ServerHelloMessage(handshakeContext.negotiatedProtocol,
-                            serverRandom, Bytes.get2Bytes(1234),handshakeContext.negotiatedCipherSuite);
+                            serverRandom, Bytes.get2Bytes(1234), handshakeContext.negotiatedCipherSuite);
 
             handshakeContext.serverRandom = serverHelloMessage.serverRandom;
             return serverHelloMessage;
         }
     }
 
-    static class ServerHelloConsumer implements HandshakeConsumer{
+    static class ServerHelloConsumer implements HandshakeConsumer {
 
         @Override
         public void consume(HandshakeContext context, ByteBuffer message) throws IOException {
 
-            ServerHelloMessage serverHelloMessage = new ServerHelloMessage(context,message);
+            ServerHelloMessage serverHelloMessage = new ServerHelloMessage(context, message);
 
             context.serverRandom = serverHelloMessage.serverRandom;
 
@@ -119,7 +118,6 @@ public class ServerHello {
             return SSLHandshakeType.SERVER_HELLO;
         }
     }
-
 
 
 }

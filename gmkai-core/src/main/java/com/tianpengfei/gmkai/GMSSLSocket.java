@@ -6,6 +6,10 @@ import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class GMSSLSocket extends SSLSocket {
@@ -13,53 +17,117 @@ public class GMSSLSocket extends SSLSocket {
 
     private final ReentrantLock socketLock = new ReentrantLock();
 
-    private final GMSSLContextSpi gmsslContextSpi;
+    private final GMContextData contextData;
 
-    private final TransportContext conContext;
+    private final GMSSLParameters sslParameters;
 
-    private final SSLConfiguration sslConfiguration;
+    private boolean isClientMode = true;
 
-    GMSSLSocket(GMSSLContextSpi gmsslContextSpi, SSLConfiguration sslConfiguration) {
+    private String peerHost;
+
+    //false的话，就会复用以前的会话，传递消息。
+    protected boolean enableSessionCreation = true;
+
+//    protected final Socket wrapSocket;
+//
+//    protected final boolean autoClose;
+
+    private final TransportContext conContext = new TransportContext();
+
+
+    List<HandshakeCompletedListener> handshakeCompletedListeners;
+
+    GMSSLSocket(GMContextData contextData, GMSSLParameters sslParameters) {
         super();
-        this.gmsslContextSpi = gmsslContextSpi;
-        this.sslConfiguration = sslConfiguration;
-        this.conContext = null;
+        this.contextData = contextData;
+        this.sslParameters = sslParameters;
+//        this.conContext = null;
     }
+
+    GMSSLSocket(GMContextData contextData, String peerHost, int peerPort) throws IOException {
+
+        super();
+        this.contextData = contextData;
+        this.peerHost = peerHost;
+        this.sslParameters = contextData.getContext().getSupportedSSLParameters(isClientMode);
+        SocketAddress socketAddress =
+                peerHost != null ? new InetSocketAddress(peerHost, peerPort) :
+                        new InetSocketAddress(InetAddress.getByName(null), peerPort);
+        connect(socketAddress, 0);
+
+    }
+
+    GMSSLSocket(GMContextData contextData, InetAddress peerHost, int peerPort) throws IOException {
+        super();
+
+        this.contextData = contextData;
+        this.sslParameters = contextData.getContext().getSupportedSSLParameters(isClientMode);
+        connect(new InetSocketAddress(peerHost, peerPort), 0);
+
+    }
+
+    GMSSLSocket(GMContextData contextData, String peerHost, int peerPort, InetAddress localHost, int localPort) throws IOException {
+        super();
+        this.contextData = contextData;
+        this.peerHost = peerHost;
+        this.sslParameters = contextData.getContext().getSupportedSSLParameters(isClientMode);
+        bind(new InetSocketAddress(localHost, localPort));
+
+        SocketAddress socketAddress =
+                peerHost != null ? new InetSocketAddress(peerHost, peerPort) :
+                        new InetSocketAddress(InetAddress.getByName(null), peerPort);
+        connect(socketAddress, 0);
+
+    }
+
+    GMSSLSocket(GMContextData contextData, InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+        super();
+        this.contextData = contextData;
+        this.sslParameters = contextData.getContext().getSupportedSSLParameters(isClientMode);
+        bind(new InetSocketAddress(localAddress, localPort));
+
+        connect(new InetSocketAddress(address, port), 0);
+
+    }
+
 
     @Override
     public String[] getSupportedCipherSuites() {
 
-        return CipherSuite.namesOf(sslConfiguration.getSupportedCipherSuites());
+        return CipherSuite.namesOf(contextData.getContext().getSupportedCipherSuites());
     }
 
     @Override
     public String[] getEnabledCipherSuites() {
-        return CipherSuite.namesOf(
-                sslConfiguration.getEnabledCipherSuites());
+        return CipherSuite.namesOf(sslParameters.cipherSuites);
     }
 
     @Override
     public void setEnabledCipherSuites(String[] suites) {
-        sslConfiguration.setEnabledCipherSuites(
-                CipherSuite.namesOf(suites));
+        sslParameters.cipherSuites = CipherSuite.namesOf(suites);
     }
 
+    // 支持的范围还大一点。根据支持的从中再根据配置筛选出一些当前可用协议。
     @Override
     public String[] getSupportedProtocols() {
-
-        return ProtocolVersion.nameOf(
-                sslConfiguration.getSupportedProtocols());
+        return ProtocolVersion.nameOf(contextData.getContext().getSupportedProtocols(isClientMode));
     }
 
+    /**
+     * 能用的表示当前连接支持那些协议，范围还小一点，从上面中挑选出。当协定好协议时和当前isClient的值或者是添加一些禁用配置
+     * ，对应可用的协议和加密套件也就变得不一样。
+     *
+     * @return
+     */
     @Override
     public String[] getEnabledProtocols() {
         return ProtocolVersion.nameOf(
-                sslConfiguration.getEnabledProtocols());
+                sslParameters.getProtocols());
     }
 
     @Override
     public void setEnabledProtocols(String[] protocols) {
-        sslConfiguration.setEnabledProtocols(ProtocolVersion.nameOf(protocols));
+        sslParameters.setProtocols(ProtocolVersion.nameOf(protocols));
     }
 
     @Override
@@ -70,12 +138,12 @@ public class GMSSLSocket extends SSLSocket {
     @Override
     public void addHandshakeCompletedListener(HandshakeCompletedListener listener) {
 
-        sslConfiguration.addHandshakeCompletedListener(listener);
+        handshakeCompletedListeners.add(listener);
     }
 
     @Override
     public void removeHandshakeCompletedListener(HandshakeCompletedListener listener) {
-        sslConfiguration.removeHandshakeCompletedListener(listener);
+        handshakeCompletedListeners.add(listener);
     }
 
     @Override
@@ -85,42 +153,44 @@ public class GMSSLSocket extends SSLSocket {
 
     @Override
     public void setUseClientMode(boolean mode) {
-        sslConfiguration.setUseClientMode(mode);
+        isClientMode = mode;
     }
 
     @Override
     public boolean getUseClientMode() {
-        return sslConfiguration.getUseClientMode();
+        return isClientMode;
     }
 
     @Override
     public void setNeedClientAuth(boolean need) {
-        sslConfiguration.setNeedClientAuth(need);
+        sslParameters.clientAuthType = need ?
+                ClientAuthType.CLIENT_AUTH_REQUIRED : ClientAuthType.CLIENT_AUTH_NONE;
     }
 
     @Override
     public boolean getNeedClientAuth() {
-        return sslConfiguration.getNeedClientAuth();
+        return sslParameters.clientAuthType == ClientAuthType.CLIENT_AUTH_REQUIRED;
     }
 
     @Override
     public void setWantClientAuth(boolean want) {
-        sslConfiguration.setWantClientAuth(want);
+        sslParameters.clientAuthType = want ? ClientAuthType.CLIENT_AUTH_REQUESTED : ClientAuthType.CLIENT_AUTH_NONE;
     }
 
     @Override
     public boolean getWantClientAuth() {
-        return sslConfiguration.getWantClientAuth();
+        return sslParameters.clientAuthType == ClientAuthType.CLIENT_AUTH_REQUESTED;
+
     }
 
     @Override
     public void setEnableSessionCreation(boolean flag) {
-        sslConfiguration.setEnableSessionCreation(flag);
+        enableSessionCreation = flag;
     }
 
     @Override
     public boolean getEnableSessionCreation() {
-        return sslConfiguration.getEnableSessionCreation();
+        return enableSessionCreation;
     }
 
     @Override
@@ -136,5 +206,11 @@ public class GMSSLSocket extends SSLSocket {
     @Override
     public OutputStream getOutputStream() throws IOException {
         return conContext.getOutStream();
+    }
+
+    @Override
+    public void connect(SocketAddress endpoint) throws IOException {
+
+        super.connect(endpoint);
     }
 }

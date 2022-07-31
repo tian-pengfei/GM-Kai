@@ -31,7 +31,7 @@ public interface GMAlgorithmApi {
         return SM2Util.generateRawKeyPair(secureRandom);
     }
 
-    
+
     static byte[] sm2Sign(byte[] priKey, byte[] withId, byte[] srcData) throws SSLException {
         try {
             return SM2Util.sign(BCECUtil.convertRawPrivateKeyToParameters(priKey), withId, srcData);
@@ -40,7 +40,7 @@ public interface GMAlgorithmApi {
         }
     }
 
-    
+
     static byte[] sm2ECDH(boolean initiator, int length, byte[] selfPriKey, byte[] selfTmpPriKey, byte[] selfId, byte[] peerPubKey, byte[] peerTmpPub, byte[] peerId) throws SSLException {
 
         return SM2KeyExchangeUtil.calculateKey(
@@ -54,27 +54,27 @@ public interface GMAlgorithmApi {
                 peerId);
     }
 
-    
+
     static byte[] prf(byte[] secret, byte[] label, byte[] seed, int length) throws SSLException {
         return GMHttpUtils.prf(secret, label, seed, length);
     }
 
-    
+
     static boolean sm2Verify(byte[] pubKey, byte[] withId, byte[] srcData, byte[] sign) throws SSLException {
         return SM2Util.verify(BCECUtil.convertPublicKeySRawToParams(pubKey), withId, srcData, sign);
     }
 
-    
+
     static byte[] sm3Hash(byte[] srcData) throws SSLException {
         return SM3Util.hash(srcData);
     }
 
-    
+
     static byte[] sm3Hmac(byte[] key, byte[] srcData) throws SSLException {
         return SM3Util.hmac(key, srcData);
     }
 
-    
+
     static void checkTrusted(X509Certificate signCert, X509Certificate encCert, List<X509Certificate> ca) throws SSLException {
 
         try {
@@ -85,7 +85,6 @@ public interface GMAlgorithmApi {
     }
 
 
-    
     static byte[] sm4EncryptECBPadding(byte[] key, byte[] data) throws SSLException {
         try {
             return SM4Util.encrypt_ECB_Padding(key, data);
@@ -94,7 +93,7 @@ public interface GMAlgorithmApi {
         }
     }
 
-    
+
     static byte[] sm4DecryptECBPadding(byte[] key, byte[] encodedText) throws SSLException {
         try {
             return SM4Util.decrypt_ECB_Padding(key, encodedText);
