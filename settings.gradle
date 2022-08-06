@@ -1,2 +1,3 @@
 rootProject.name = 'GM-Kai'
+include 'gmkai-core'
 
