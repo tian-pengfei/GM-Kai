@@ -7,6 +7,7 @@ import com.tianpengfei.gmkai.handshake.SSLHandshakeType;
 
 import javax.net.ssl.SSLException;
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -38,9 +39,9 @@ public class RecordInputStream {
 
         int length = ((inputStream.read() & 0xFF) << 8)
                 | (inputStream.read() & 0xFF);
-        byte[] content = new byte[length];
+        byte[] content = safeRead(inputStream, length);
 
-        inputStream.read(content);
+//        inputStream.read(content);
 
 
         if (type == ContentType.ALERT) {
@@ -67,5 +68,17 @@ public class RecordInputStream {
         inputStream.close();
     }
 
+    public static byte[] safeRead(InputStream input, int len) throws IOException {
+        byte[] buf = new byte[len];
+        int count = 0;
+        while (count < len) {
+            int l = input.read(buf, count, len - count);
+            if (l == -1) {
+                throw new EOFException("unexpected end of stream");
+            }
+            count += l;
+        }
+        return buf;
+    }
 
 }
