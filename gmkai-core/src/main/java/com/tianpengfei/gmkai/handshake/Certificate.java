@@ -82,7 +82,7 @@ public class Certificate {
 
             int msgLen = 3;
             msgLen += encodedCertChain
-                    .stream().mapToInt(encodedCert -> encodedCert.length).sum();
+                    .stream().mapToInt(encodedCert -> encodedCert.length+3).sum();
             return msgLen;
         }
     }
@@ -93,7 +93,7 @@ public class Certificate {
         @Override
         public HandshakeMessage produce(HandshakeContext handshakeContext) throws SSLException {
 
-            X509Certificate[] certs = handshakeContext.contextData
+            X509Certificate[] certs = handshakeContext.getContextData()
                     .getX509KeyManager()
                     .getCertificateChain("sig", "enc");
 

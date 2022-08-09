@@ -2,7 +2,6 @@ package com.tianpengfei.gmkai.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public interface Bytes {
 

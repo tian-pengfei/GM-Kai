@@ -32,6 +32,9 @@ public class GMSSLContextSpi extends SSLContextSpi {
                 CipherSuite.values()
         );
 
+
+
+
     }
 
 
@@ -39,10 +42,12 @@ public class GMSSLContextSpi extends SSLContextSpi {
 
     @Override
     protected void engineInit(KeyManager[] km, TrustManager[] tm, SecureRandom sr) throws KeyManagementException {
-
-        GMX509KeyManager keyManager = (GMX509KeyManager) Arrays.stream(tm)
-                .filter(trustManager1 -> trustManager1 instanceof GMX509KeyManager).
-                        findFirst().orElse(null);
+        GMX509KeyManager keyManager = null;
+        if(km!=null){
+            keyManager = (GMX509KeyManager) Arrays.stream(km)
+                    .filter(_km -> _km instanceof GMX509KeyManager).
+                            findFirst().orElse(null);
+        }
 
         GMX509TrustManager trustManager = (GMX509TrustManager) Arrays.stream(tm)
                 .filter(trustManager1 -> trustManager1 instanceof GMX509TrustManager)
@@ -63,16 +68,18 @@ public class GMSSLContextSpi extends SSLContextSpi {
 
     @Override
     protected SSLServerSocketFactory engineGetServerSocketFactory() {
-        return null;
+        return new GMKaiServerSocketFactory(contextData);
     }
 
     @Override
     protected SSLEngine engineCreateSSLEngine() {
+        // TODO: 兼容国密的SSL引擎 2022/8/8
         return null;
     }
 
     @Override
     protected SSLEngine engineCreateSSLEngine(String host, int port) {
+        // TODO: 兼容国密的SSL引擎 2022/8/8
         return null;
     }
 
@@ -99,9 +106,9 @@ public class GMSSLContextSpi extends SSLContextSpi {
         return Lists.newArrayList(CipherSuite.ECC_SM4_CBC_SM3);
     }
 
-    GMSSLParameters getSupportedSSLParameters() {
+    GMSSLParameters getDefaultSSLParameters(boolean isClient) {
 
-        return new GMSSLParameters(this, getSupportedProtocols(), getSupportedCipherSuites());
+        return new GMSSLParameters(isClient,this, getDefaultProtocols(isClient), getDefaultCipherSuites(isClient));
     }
 
 

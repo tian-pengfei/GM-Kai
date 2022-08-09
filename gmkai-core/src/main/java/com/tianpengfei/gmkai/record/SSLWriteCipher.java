@@ -2,25 +2,14 @@ package com.tianpengfei.gmkai.record;
 
 import com.tianpengfei.gmkai.util.ByteBuffers;
 import com.tianpengfei.gmkai.util.Bytes;
-import com.tianpengfei.gmkai.util.bc.SM3Util;
 import com.tianpengfei.gmkai.util.bc.SM4Util;
 import org.bouncycastle.crypto.digests.SM3Digest;
-import org.bouncycastle.crypto.engines.SM4Engine;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.util.encoders.Hex;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.net.ssl.SSLException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 public class SSLWriteCipher {
 

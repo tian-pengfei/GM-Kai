@@ -3,7 +3,6 @@ package com.tianpengfei.gmkai.application;
 import com.tianpengfei.gmkai.TransportContext;
 
 import java.io.IOException;
-
 import java.io.OutputStream;
 
 public class AppOutputStream extends OutputStream {

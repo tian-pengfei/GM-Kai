@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public enum CipherSuite {
 
-    NULL("NULL", 0x0000, null, null, null, null),
+//    NULL("NULL", 0x0000, null, null, null, null),
 
     ECC_SM4_CBC_SM3("ECC_SM4_CBC_SM3"
             , 0xe013
@@ -78,7 +78,7 @@ public enum CipherSuite {
     static CipherSuite namesOf(String cipherSuite) {
 
         return Arrays.stream(values()).filter(c -> c.name.equals(cipherSuite)
-        ).findFirst().orElse(NULL);
+        ).findFirst().orElse(null);
     }
 
     static List<CipherSuite> namesOf(String[] cipherSuites) {

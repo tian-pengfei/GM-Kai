@@ -72,7 +72,7 @@ public class GMX509KeyManager implements X509KeyManager {
     public PrivateKey getPrivateKey(String alias) {
         try {
             Key key = keyStore.getKey(alias, password);
-            if (keyStore instanceof PrivateKey) {
+            if (key instanceof PrivateKey) {
                 return (PrivateKey) key;
             }
 

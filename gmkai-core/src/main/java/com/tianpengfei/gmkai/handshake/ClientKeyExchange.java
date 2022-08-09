@@ -5,20 +5,14 @@ import com.tianpengfei.gmkai.util.ByteBuffers;
 import com.tianpengfei.gmkai.util.Bytes;
 import com.tianpengfei.gmkai.util.bc.SM2Util;
 import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.engines.SM2Engine;
-import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
-import org.bouncycastle.util.encoders.Hex;
 
-import javax.crypto.ShortBufferException;
 import javax.net.ssl.SSLException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 public class ClientKeyExchange {
 
@@ -73,13 +67,22 @@ public class ClientKeyExchange {
             //解密预主密钥
 
             try {
-                handshakeContext.handshakeSession.setPreSecret(
-                        SM2Util.decrypt(
-                                (ECPrivateKeyParameters) handshakeContext.contextData.getX509KeyManager().getPrivateKey("enc")
-                                , clientKeyExchangeMessage.encodedPreMasterSecret));
-            } catch (InvalidCipherTextException e) {
-                throw new SSLException("握手失败");
+
+                byte[] preMasterSecret = SM2Util.decrypt((BCECPrivateKey) handshakeContext.getContextData().getX509KeyManager().getPrivateKey("enc")
+                        ,SM2Util.decodeDERSM2Cipher(
+                                 clientKeyExchangeMessage.encodedPreMasterSecret));
+                handshakeContext.handshakeSession.setPreSecret(preMasterSecret);
+                byte[] MASTER_SECRET = "master secret".getBytes();
+
+                byte[] seed = Bytes.combine(handshakeContext.clientRandom, handshakeContext.serverRandom);
+                handshakeContext.handshakeSession.setMasterSecret(Crypto.prf(preMasterSecret, MASTER_SECRET, seed, preMasterSecret.length));
+
+            } catch (Exception e) {
+                throw new SSLException(e.getMessage(),e);
             }
+
+            handshakeContext.transportContext.updateSecurityParameters();
+
         }
 
         @Override

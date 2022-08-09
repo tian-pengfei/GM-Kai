@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class TransportContext implements ConnectionContext, ConnectSetting {
+public class TransportContext implements ConnectionContext {
 
     boolean isNegotiated = false;
 
@@ -25,8 +25,6 @@ public class TransportContext implements ConnectionContext, ConnectSetting {
 
     GMSSLSession connectSession;
 
-    GMSSLSession sslSession;
-
     //记录层协议
     Record record;
 
@@ -37,18 +35,24 @@ public class TransportContext implements ConnectionContext, ConnectSetting {
 
     GMSSLParameters sslParameters;
 
-    TransportContext(GMSSLParameters sslParameters, ConnectSetting connectSetting, InputStream inputStream, OutputStream outputStream) {
+    GMSSLContextData contextData;
 
-        peerHost = connectSetting.getPeerHost();
-        peerPort = connectSetting.getPeerPort();
+    TransportContext(GMSSLParameters sslParameters,GMSSLContextData contextData, PeerInfoProvider peerInfoProvider, InputStream inputStream, OutputStream outputStream) {
+        this.sslParameters = sslParameters;
+        this.contextData = contextData;
+
+        peerHost = peerInfoProvider.getHostname();
+
+        peerPort = peerInfoProvider.getPort();
 
         record = new Record(inputStream, outputStream);
-        this.sslParameters = sslParameters;
+
+
 
         handshakeContext = new HandshakeContext(this, sslParameters);
     }
 
-    public void startHandshake() throws IOException {
+    public synchronized void startHandshake() throws IOException {
         if (!isNegotiated) {
             handshakeContext.startHandshake(this);
         }
@@ -72,14 +76,21 @@ public class TransportContext implements ConnectionContext, ConnectSetting {
         return handshakeContext.getHandshakeSession();
     }
 
-    InputStream getAppInputStream() {
+    InputStream getAppInputStream() throws IOException {
+        if(!isNegotiated){
+            startHandshake();
+        }
         if (appInputStream == null) {
             appInputStream = new AppInputStream(this);
         }
         return appInputStream;
     }
 
-    OutputStream getAppOutPutStream() {
+    OutputStream getAppOutPutStream() throws IOException {
+        if(!isNegotiated){
+            startHandshake();
+        }
+
         if (appOutPutStream == null) {
             appOutPutStream = new AppOutputStream(this);
         }
@@ -134,12 +145,10 @@ public class TransportContext implements ConnectionContext, ConnectSetting {
         isNegotiated = negotiated;
     }
 
-    @Override
     public int getPeerPort() {
         return peerPort;
     }
 
-    @Override
     public String getPeerHost() {
         return peerHost;
     }
@@ -177,5 +186,9 @@ public class TransportContext implements ConnectionContext, ConnectSetting {
 
     public void closeWrite() throws IOException {
         record.closeWrite();
+    }
+
+    public GMSSLContextData getContextData() {
+        return contextData;
     }
 }

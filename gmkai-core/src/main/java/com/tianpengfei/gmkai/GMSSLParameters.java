@@ -40,6 +40,11 @@ public class GMSSLParameters {
         this.cipherSuites = cipherSuites;
         this.protocols = protocols;
     }
+    public GMSSLParameters(boolean isClientMod,GMSSLContextSpi context, List<ProtocolVersion> protocols, List<CipherSuite> cipherSuites) {
+
+        this(context,protocols,cipherSuites);
+        this.isClientMode = isClientMod;
+    }
 
     public AlgorithmConstraints getUserSpecifiedAlgorithmConstraints() {
         return userSpecifiedAlgorithmConstraints;

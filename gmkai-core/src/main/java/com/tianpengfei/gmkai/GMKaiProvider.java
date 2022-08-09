@@ -21,5 +21,5 @@ public class GMKaiProvider extends Provider {
     }
 
 
-    public static final String PROVIDER_NAME = "GMKaiProvider";
+    public static final String PROVIDER_NAME = "GMKai";
 }

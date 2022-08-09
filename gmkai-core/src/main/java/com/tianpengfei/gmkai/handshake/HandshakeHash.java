@@ -3,9 +3,7 @@ package com.tianpengfei.gmkai.handshake;
 import com.google.common.collect.Lists;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SM3Digest;
-import org.bouncycastle.util.encoders.Hex;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class HandshakeHash {

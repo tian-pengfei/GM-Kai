@@ -5,8 +5,6 @@ import com.tianpengfei.gmkai.CompressionMethod;
 import com.tianpengfei.gmkai.GMSSLSession;
 import com.tianpengfei.gmkai.ProtocolVersion;
 import com.tianpengfei.gmkai.util.ByteBuffers;
-import com.tianpengfei.gmkai.util.Bytes;
-import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -68,7 +66,7 @@ public class ServerHello {
 
             ByteBuffer m = ByteBuffer.allocate(messageLength());
 
-            ByteBuffers.putInt8(m, serverVersion.getId());
+            ByteBuffers.putInt16(m, serverVersion.getId());
             m.put(serverRandom);
             ByteBuffers.putBytes8(m, sessionId);
             ByteBuffers.putInt16(m, cipherSuite.getId());
@@ -96,7 +94,8 @@ public class ServerHello {
 
             ServerHelloMessage serverHelloMessage =
                     new ServerHelloMessage(handshakeContext.negotiatedProtocol,
-                            serverRandom, secureRandom.generateSeed(2), handshakeContext.negotiatedCipherSuite);
+                            serverRandom, secureRandom.generateSeed(2),
+                            handshakeContext.negotiatedCipherSuite);
 
             handshakeContext.serverRandom = serverHelloMessage.serverRandom;
             return serverHelloMessage;

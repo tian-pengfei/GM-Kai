@@ -59,15 +59,20 @@ public class ProtocolNegotiator {
             SSLHandshakeType sht = SSLHandshakeType.valueOf(message.get());
 
             if (sht == SSLHandshakeType.CLIENT_HELLO) {
+                handshakeContext.handshakeHash.reset();
+                handshakeContext.handshakeHash.update(plaintext.fragment.clone());
+
                 int messageLength = ByteBuffers.getInt24(message);
                 ClientHello.handshakeConsumer.consume(handshakeContext, message);
 
-                ServerHello.handshakeProducer.produce(handshakeContext);
+                HandshakeMessage handshakeMessage = ServerHello.handshakeProducer.produce(handshakeContext);
 
+                handshakeContext.writeHandshakeMessage(handshakeMessage);
                 //组装协议
                 packageHandshake(handshakeContext);
 
                 handshakeContext.switch2write();
+
             }
         }
 

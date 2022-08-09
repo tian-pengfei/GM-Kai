@@ -32,10 +32,6 @@ dependencies {
     implementation group: 'org.bouncycastle', name: 'bctls-jdk18on', version: '1.71'
     implementation("org.bouncycastle:bcpkix-jdk15on:1.70")
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    implementation group: 'io.netty', name: 'netty-all', version: '4.1.79.Final'
-    implementation group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: '2.0.54.Final'
-
-    implementation 'org.conscrypt:conscrypt-openjdk:2.5.2:' + osdetector.classifier
 
     testImplementation 'junit:junit:4.12'
 

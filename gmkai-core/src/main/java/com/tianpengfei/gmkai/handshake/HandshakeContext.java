@@ -6,7 +6,6 @@ import com.tianpengfei.gmkai.*;
 import com.tianpengfei.gmkai.record.Plaintext;
 import com.tianpengfei.gmkai.record.SecurityParameters;
 import com.tianpengfei.gmkai.util.ByteBuffers;
-import io.netty.internal.tcnative.SSL;
 import org.bouncycastle.tls.ConnectionEnd;
 
 import java.io.IOException;
@@ -21,8 +20,6 @@ public class HandshakeContext implements ConnectionContext {
 
 
     TransportContext transportContext;
-
-    GMSSLContextData contextData;
 
     GMSSLParameters sslParameters;
 
@@ -185,5 +182,9 @@ public class HandshakeContext implements ConnectionContext {
         return new SecurityParameters(sslParameters.isClientMode() ? ConnectionEnd.client : ConnectionEnd.server,
                 clientRandom, serverRandom, handshakeSession.getMasterSecret());
 
+    }
+
+    public GMSSLContextData getContextData() {
+        return transportContext.getContextData();
     }
 }

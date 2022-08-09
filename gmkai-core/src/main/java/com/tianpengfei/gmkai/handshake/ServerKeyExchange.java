@@ -1,6 +1,5 @@
 package com.tianpengfei.gmkai.handshake;
 
-import com.tianpengfei.gmkai.cipher.Crypto;
 import com.tianpengfei.gmkai.util.ByteBuffers;
 import com.tianpengfei.gmkai.util.Bytes;
 import com.tianpengfei.gmkai.util.bc.SM2Util;
@@ -63,15 +62,16 @@ public class ServerKeyExchange {
             //验证签名
 
             // signature privateKey
-            BCECPrivateKey privateKey = (BCECPrivateKey) handshakeContext.contextData.getX509KeyManager().getPrivateKey("sig");
+            BCECPrivateKey privateKey = (BCECPrivateKey) handshakeContext.getContextData().getX509KeyManager().getPrivateKey("sig");
             // encryption cert
             X509Certificate encryptionCert = (X509Certificate) handshakeContext.handshakeSession.getLocalCertificates()[1];
             byte[] src;
             try {
+                byte[] certBytes = encryptionCert.getEncoded();
                 src = Bytes.combine(
                         handshakeContext.clientRandom,
                         handshakeContext.serverRandom,
-                        encryptionCert.getEncoded());
+                        Bytes.get3Bytes(certBytes.length), certBytes);
             } catch (CertificateEncodingException | IOException e) {
                 throw new SSLException(e.getMessage(), e);
             }
