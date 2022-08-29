@@ -12,11 +12,11 @@ public class BcTLSCrypto implements TLSCrypto {
 
 
     @Override
-    public TLSHMac createHMAC(MacAlg macAlg){
+    public TLSHMac createHMAC(MacAlg macAlg) {
 
         Digest digest;
 
-        switch (macAlg){
+        switch (macAlg) {
             case SM3:
                 digest = new SM3Digest();
                 break;
@@ -31,7 +31,6 @@ public class BcTLSCrypto implements TLSCrypto {
 
         return new BcTLSHMac(hMac);
     }
-
 
 
 }

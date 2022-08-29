@@ -9,7 +9,7 @@ class BcTLSHMac implements TLSHMac {
 
     private final HMac hmac;
 
-    BcTLSHMac(HMac hmac){
+    BcTLSHMac(HMac hmac) {
         this.hmac = hmac;
     }
 
@@ -49,6 +49,6 @@ class BcTLSHMac implements TLSHMac {
 
     @Override
     public int getInternalBlockSize() {
-        return ((ExtendedDigest)hmac.getUnderlyingDigest()).getByteLength();
+        return ((ExtendedDigest) hmac.getUnderlyingDigest()).getByteLength();
     }
 }
