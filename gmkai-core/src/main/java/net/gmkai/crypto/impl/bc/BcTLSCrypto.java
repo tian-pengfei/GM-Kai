@@ -1,9 +1,6 @@
 package net.gmkai.crypto.impl.bc;
 
-import net.gmkai.crypto.MacAlg;
-import net.gmkai.crypto.TLSCrypto;
-import net.gmkai.crypto.TLSHMac;
-import org.bouncycastle.crypto.Digest;
+import net.gmkai.crypto.*;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
@@ -14,22 +11,27 @@ public class BcTLSCrypto implements TLSCrypto {
     @Override
     public TLSHMac createHMAC(MacAlg macAlg) {
 
-        Digest digest;
-
         switch (macAlg) {
-            case SM3:
-                digest = new SM3Digest();
-                break;
-            case SHA256:
-                digest = new SHA256Digest();
-                break;
+            case M_SM3:
+                return new BcTLSHMac(new HMac(new SM3Digest()));
+            case M_SHA256:
+                return new BcTLSHMac(new HMac(new SHA256Digest()));
             default:
                 throw new IllegalStateException("Unexpected value: " + macAlg);
         }
 
-        HMac hMac = new HMac(digest);
+    }
 
-        return new BcTLSHMac(hMac);
+    @Override
+    public TLSHash createHash(HashAlg hashAlg) {
+        switch (hashAlg) {
+            case H_SM3:
+                return new BcTLSHash(new SM3Digest());
+            case H_SHA256:
+                return new BcTLSHash(new SHA256Digest());
+            default:
+                throw new IllegalStateException("Unexpected value: " + hashAlg);
+        }
     }
 
 
