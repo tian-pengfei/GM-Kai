@@ -8,4 +8,9 @@ public class Hexs {
             String data) {
         return Hex.decode(data);
     }
+
+    public static String toHexString(
+            byte[] data) {
+        return Hex.toHexString(data);
+    }
 }
