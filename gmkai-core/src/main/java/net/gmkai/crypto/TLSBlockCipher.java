@@ -3,12 +3,15 @@ package net.gmkai.crypto;
 import net.gmkai.TLSText;
 import net.gmkai.crypto.impl.TLSBlockCipherImpl;
 import net.gmkai.crypto.padding.Padding;
+import net.gmkai.util.ByteBufferBuilder;
 import net.gmkai.util.ByteBuffers;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import static net.gmkai.util.BufferWriteOperations.*;
 
 public class TLSBlockCipher implements TLSCipher {
 
@@ -109,13 +112,14 @@ public class TLSBlockCipher implements TLSCipher {
     private byte[] calculateRecordMAC(long seqNo, TLSText plaintext, TLSHMac mac) throws IOException {
 
         int dataLength = 8 + 1 + 2 + 2 + plaintext.fragment.length;
-        byte[] data = new byte[dataLength];
-        ByteBuffer buffer = ByteBuffer.wrap(data);
-        ByteBuffers.putLong64(buffer, seqNo);
-        buffer.put(plaintext.contentType.id);
 
-        ByteBuffers.putInt16(buffer, plaintext.version.getId());
-        ByteBuffers.putBytes16(buffer, plaintext.fragment);
+        byte[] data = ByteBufferBuilder.
+                bufferCapacity(dataLength).
+                operate(putLong64(seqNo)).
+                operate(put(plaintext.contentType.id)).
+                operate(putInt16(plaintext.version.getId())).
+                operate(putBytes16(plaintext.fragment)).buildByteArray();
+
         byte[] maxResult = new byte[mac.getMacLength()];
 
         mac.update(data, 0, dataLength);
