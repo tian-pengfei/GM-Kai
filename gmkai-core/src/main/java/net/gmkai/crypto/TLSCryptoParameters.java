@@ -2,19 +2,22 @@ package net.gmkai.crypto;
 
 public class TLSCryptoParameters {
 
+
+    private final CipherAlg cipherAlg;
+
+    private final MacAlg macAlg;
+
     private final byte[] selfMacKey;
 
     private final byte[] peerMackey;
 
     private final byte[] selfCryptoKey;
 
-
     private final byte[] selfCryptoKeyIv;
 
     private final byte[] peerCryptoKey;
 
     private final byte[] peerCryptoIv;
-
 
     public byte[] getSelfMacKey() {
         return selfMacKey;
@@ -40,7 +43,21 @@ public class TLSCryptoParameters {
         return peerCryptoIv;
     }
 
-    public TLSCryptoParameters(byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoIv) {
+    public CipherAlg getCipherAlg() {
+        return cipherAlg;
+    }
+
+    public MacAlg getMacAlg() {
+        return macAlg;
+    }
+
+    public byte[] getSelfCryptoKeyIv() {
+        return selfCryptoKeyIv;
+    }
+
+    public TLSCryptoParameters(CipherAlg cipherAlg, MacAlg macAlg, byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoIv) {
+        this.cipherAlg = cipherAlg;
+        this.macAlg = macAlg;
         this.selfMacKey = selfMacKey;
         this.peerMackey = peerMackey;
         this.selfCryptoKey = selfCryptoKey;
@@ -49,8 +66,9 @@ public class TLSCryptoParameters {
         this.peerCryptoIv = peerCryptoIv;
     }
 
-
     public static final class TLSCryptoParametersBuilder {
+        private CipherAlg cipherAlg;
+        private MacAlg macAlg;
         private byte[] selfMacKey;
         private byte[] peerMackey;
         private byte[] selfCryptoKey;
@@ -63,6 +81,16 @@ public class TLSCryptoParameters {
 
         public static TLSCryptoParametersBuilder aTLSCryptoParameters() {
             return new TLSCryptoParametersBuilder();
+        }
+
+        public TLSCryptoParametersBuilder withCipherAlg(CipherAlg cipherAlg) {
+            this.cipherAlg = cipherAlg;
+            return this;
+        }
+
+        public TLSCryptoParametersBuilder withMacAlg(MacAlg macAlg) {
+            this.macAlg = macAlg;
+            return this;
         }
 
         public TLSCryptoParametersBuilder withSelfMacKey(byte[] selfMacKey) {
@@ -96,7 +124,7 @@ public class TLSCryptoParameters {
         }
 
         public TLSCryptoParameters build() {
-            return new TLSCryptoParameters(selfMacKey, peerMackey, selfCryptoKey, selfCryptoKeyIv, peerCryptoKey, peerCryptoIv);
+            return new TLSCryptoParameters(cipherAlg, macAlg, selfMacKey, peerMackey, selfCryptoKey, selfCryptoKeyIv, peerCryptoKey, peerCryptoIv);
         }
     }
 }

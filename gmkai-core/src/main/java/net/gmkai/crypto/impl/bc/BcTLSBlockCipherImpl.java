@@ -36,7 +36,7 @@ public class BcTLSBlockCipherImpl implements TLSBlockCipherImpl {
         for (int i = 0; i < inputLength; i += blockSize) {
             cipher.processBlock(input, inputOffset + i, output, outputOffset + i);
         }
-
+        cipher.reset();
         return inputLength;
     }
 

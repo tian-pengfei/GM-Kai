@@ -4,11 +4,9 @@ import net.gmkai.TLSText;
 import net.gmkai.crypto.impl.TLSBlockCipherImpl;
 import net.gmkai.crypto.padding.Padding;
 import net.gmkai.util.ByteBufferBuilder;
-import net.gmkai.util.ByteBuffers;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static net.gmkai.util.BufferWriteOperations.*;
@@ -89,15 +87,17 @@ public class TLSBlockCipher implements TLSCipher {
     public TLSText encryptTLSText(long seqNo, TLSText plaintext) throws IOException {
 
         int dataLength = cipherKeySize + plaintext.fragment.length + encryptMac.getMacLength();
+
         byte[] paddingBytes = padding.getPaddingBytes(dataLength, encryptCipher.getBlockSize());
-        byte[] input = new byte[dataLength + paddingBytes.length];
-
-        ByteBuffer inputByteBuffer = ByteBuffer.wrap(input);
-
         byte[] macVal = calculateRecordMAC(seqNo, plaintext, encryptMac);
-        ByteBuffers.putBytes(inputByteBuffer, encryptIv, plaintext.fragment, macVal, paddingBytes);
+        int fragmentLength = dataLength + paddingBytes.length;
 
-        byte[] output = new byte[dataLength + paddingBytes.length];
+        byte[] input = ByteBufferBuilder.
+                bufferCapacity(fragmentLength).
+                operate(putBytes(encryptIv, plaintext.fragment, macVal, paddingBytes)).buildByteArray();
+
+        byte[] output = new byte[fragmentLength];
+
         encryptCipher.doFinal(input, 0, input.length, output, 0);
 
         return new TLSText(plaintext.contentType, plaintext.version, output);
