@@ -43,24 +43,24 @@ public class BcTLSCrypto implements TLSCrypto {
 
     @Override
     public TLSBlockCipher createTLSBlockCipher(TLSCryptoParameters cryptoParameters) throws IOException {
-        if (cryptoParameters.getCipherAlg().cipherType != TLSCipherType.BLOCK_CIPHER) {
+        if (cryptoParameters.getBulkCipherAlg().cipherType != TLSCipherType.BLOCK_CIPHER) {
             throw new RuntimeException();
         }
-        BcTLSBlockCipherImpl encrypt = new BcTLSBlockCipherImpl(createBlockCipher(cryptoParameters.getCipherAlg()), true);
-        BcTLSBlockCipherImpl decrypt = new BcTLSBlockCipherImpl(createBlockCipher(cryptoParameters.getCipherAlg()), false);
+        BcTLSBlockCipherImpl encrypt = new BcTLSBlockCipherImpl(createBlockCipher(cryptoParameters.getBulkCipherAlg()), true);
+        BcTLSBlockCipherImpl decrypt = new BcTLSBlockCipherImpl(createBlockCipher(cryptoParameters.getBulkCipherAlg()), false);
         Padding padding = new TLSPadding();
 
         return new TLSBlockCipher(cryptoParameters,
                 encrypt, decrypt, createHMAC(cryptoParameters.getMacAlg()), createHMAC(cryptoParameters.getMacAlg()),
-                cryptoParameters.getCipherAlg().cipherKeySize, padding);
+                cryptoParameters.getBulkCipherAlg().cipherKeySize, padding);
     }
 
-    BlockCipher createBlockCipher(CipherAlg cipherAlg) {
-        switch (cipherAlg) {
+    BlockCipher createBlockCipher(BulkCipherAlg bulkCipherAlg) {
+        switch (bulkCipherAlg) {
             case SM4_CBC:
                 return new CBCBlockCipher(new SM4Engine());
             default:
-                throw new IllegalStateException("Unexpected value: " + cipherAlg);
+                throw new IllegalStateException("Unexpected value: " + bulkCipherAlg);
         }
 
     }

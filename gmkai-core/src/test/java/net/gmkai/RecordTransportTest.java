@@ -1,6 +1,6 @@
 package net.gmkai;
 
-import net.gmkai.crypto.CipherAlg;
+import net.gmkai.crypto.BulkCipherAlg;
 import net.gmkai.crypto.MacAlg;
 import net.gmkai.crypto.TLSCrypto;
 import net.gmkai.crypto.TLSCryptoParameters;
@@ -48,7 +48,7 @@ public class RecordTransportTest {
             .withPeerCryptoKey(Hexs.decode("8c06a8e3e890f677703956904453b386"))
             .withPeerCryptoIv(Hexs.decode("871d2a1206d7a3e6e83fb238f5c95552"))
             .withPeerMackey(Hexs.decode("3be723bff1b758ec8335ea3ff988f43c5a9f194ca12560f9a52e6010f370fb57"))
-            .withCipherAlg(CipherAlg.SM4_CBC)
+            .withBulkCipherAlg(BulkCipherAlg.SM4_CBC)
             .withMacAlg(MacAlg.M_SM3)
             .build();
 

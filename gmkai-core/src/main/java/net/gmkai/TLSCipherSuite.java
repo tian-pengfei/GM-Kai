@@ -1,6 +1,6 @@
 package net.gmkai;
 
-import net.gmkai.crypto.CipherAlg;
+import net.gmkai.crypto.BulkCipherAlg;
 import net.gmkai.crypto.HashAlg;
 import net.gmkai.crypto.KeyExchangeAlg;
 import net.gmkai.crypto.MacAlg;
@@ -16,11 +16,11 @@ public enum TLSCipherSuite {
     ECC_SM4_CBC_SM3("ECC_SM4_CBC_SM3"
             , 0xe013
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
-            , KeyExchangeAlg.ECC, CipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3),
+            , KeyExchangeAlg.ECC, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3),
     ECDHE_SM4_CBC_SM3("ECDHE_SM4_CBC_SM3"
             , 0xe011
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
-            , KeyExchangeAlg.ECDHE, CipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3);
+            , KeyExchangeAlg.ECDHE, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3);
 
 
     public final String name;
@@ -31,18 +31,18 @@ public enum TLSCipherSuite {
 
     public final KeyExchangeAlg keyExchangeAlg;
 
-    public final CipherAlg cipherAlg;
+    public final BulkCipherAlg bulkCipherAlg;
 
     public final MacAlg macAlg;
 
     public final HashAlg hashAlg;
 
-    TLSCipherSuite(String name, int id, ProtocolVersion[] supportedProtocols, KeyExchangeAlg keyExchangeAlg, CipherAlg cipherAlg, MacAlg macAlg, HashAlg hashAlg) {
+    TLSCipherSuite(String name, int id, ProtocolVersion[] supportedProtocols, KeyExchangeAlg keyExchangeAlg, BulkCipherAlg bulkCipherAlg, MacAlg macAlg, HashAlg hashAlg) {
         this.name = name;
         this.id = id;
         this.supportedProtocols = supportedProtocols;
         this.keyExchangeAlg = keyExchangeAlg;
-        this.cipherAlg = cipherAlg;
+        this.bulkCipherAlg = bulkCipherAlg;
         this.macAlg = macAlg;
         this.hashAlg = hashAlg;
     }

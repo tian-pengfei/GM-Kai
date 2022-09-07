@@ -21,7 +21,7 @@ public class TLSBlockCipherTest {
             .withPeerCryptoKey(Hexs.decode("863cb52fbac47f9d1b7b825db7ca269f"))
             .withPeerCryptoIv(Hexs.decode("a9850b81abf358798ad4bb23e8f8966a"))
             .withPeerMackey(Hexs.decode("b0f892b9f616c0bf93daa9fb64a34b312deb0c6a30f6b7fd87c41901778453c4"))
-            .withCipherAlg(CipherAlg.SM4_CBC)
+            .withBulkCipherAlg(BulkCipherAlg.SM4_CBC)
             .withMacAlg(MacAlg.M_SM3)
             .build();
 

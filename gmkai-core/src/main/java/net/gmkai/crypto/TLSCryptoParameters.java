@@ -3,7 +3,7 @@ package net.gmkai.crypto;
 public class TLSCryptoParameters {
 
 
-    private final CipherAlg cipherAlg;
+    private final BulkCipherAlg bulkCipherAlg;
 
     private final MacAlg macAlg;
 
@@ -43,8 +43,8 @@ public class TLSCryptoParameters {
         return peerCryptoIv;
     }
 
-    public CipherAlg getCipherAlg() {
-        return cipherAlg;
+    public BulkCipherAlg getBulkCipherAlg() {
+        return bulkCipherAlg;
     }
 
     public MacAlg getMacAlg() {
@@ -55,8 +55,8 @@ public class TLSCryptoParameters {
         return selfCryptoKeyIv;
     }
 
-    public TLSCryptoParameters(CipherAlg cipherAlg, MacAlg macAlg, byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoIv) {
-        this.cipherAlg = cipherAlg;
+    public TLSCryptoParameters(BulkCipherAlg bulkCipherAlg, MacAlg macAlg, byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoIv) {
+        this.bulkCipherAlg = bulkCipherAlg;
         this.macAlg = macAlg;
         this.selfMacKey = selfMacKey;
         this.peerMackey = peerMackey;
@@ -67,7 +67,7 @@ public class TLSCryptoParameters {
     }
 
     public static final class TLSCryptoParametersBuilder {
-        private CipherAlg cipherAlg;
+        private BulkCipherAlg bulkCipherAlg;
         private MacAlg macAlg;
         private byte[] selfMacKey;
         private byte[] peerMackey;
@@ -83,8 +83,8 @@ public class TLSCryptoParameters {
             return new TLSCryptoParametersBuilder();
         }
 
-        public TLSCryptoParametersBuilder withCipherAlg(CipherAlg cipherAlg) {
-            this.cipherAlg = cipherAlg;
+        public TLSCryptoParametersBuilder withBulkCipherAlg(BulkCipherAlg bulkCipherAlg) {
+            this.bulkCipherAlg = bulkCipherAlg;
             return this;
         }
 
@@ -124,7 +124,7 @@ public class TLSCryptoParameters {
         }
 
         public TLSCryptoParameters build() {
-            return new TLSCryptoParameters(cipherAlg, macAlg, selfMacKey, peerMackey, selfCryptoKey, selfCryptoKeyIv, peerCryptoKey, peerCryptoIv);
+            return new TLSCryptoParameters(bulkCipherAlg, macAlg, selfMacKey, peerMackey, selfCryptoKey, selfCryptoKeyIv, peerCryptoKey, peerCryptoIv);
         }
     }
 }

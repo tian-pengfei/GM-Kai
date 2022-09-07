@@ -1,6 +1,6 @@
 package net.gmkai.crypto;
 
-public enum CipherAlg {
+public enum BulkCipherAlg {
 
     SM4_CBC("SM4_CBC", TLSCipherType.BLOCK_CIPHER, 16),
     SM4_GCM("SM4_GCM", TLSCipherType.AEAD_CIPHER, 16);
@@ -11,7 +11,7 @@ public enum CipherAlg {
 
     public final int cipherKeySize;
 
-    CipherAlg(String name, TLSCipherType cipherType, int cipherKeySize) {
+    BulkCipherAlg(String name, TLSCipherType cipherType, int cipherKeySize) {
         this.name = name;
         this.cipherType = cipherType;
         this.cipherKeySize = cipherKeySize;

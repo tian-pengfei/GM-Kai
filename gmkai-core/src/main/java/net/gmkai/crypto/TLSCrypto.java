@@ -13,7 +13,7 @@ public interface TLSCrypto {
 
     default TLSCipher createTLSCipher(TLSCryptoParameters cryptoParameters) throws IOException {
 
-        if (cryptoParameters.getCipherAlg().cipherType == TLSCipherType.BLOCK_CIPHER) {
+        if (cryptoParameters.getBulkCipherAlg().cipherType == TLSCipherType.BLOCK_CIPHER) {
             return createTLSBlockCipher(cryptoParameters);
         }
         throw new SSLException("未支持其他类型加密");
