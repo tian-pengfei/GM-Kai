@@ -2,7 +2,8 @@ package net.gmkai.crypto.padding;
 
 
 import net.gmkai.util.Hexs;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLException;
 
@@ -28,11 +29,12 @@ public class PaddingTest {
         assertThat(paddingCount, is(4));
     }
 
-    @Test(expected = SSLException.class)
+    @Test
     public void should_throw_exception_by_corrupted_data() throws SSLException {
         Padding tlsPadding = new TLSPadding();
         byte[] paddedData = Hexs.decode("0000000002030303");
-        int paddingCount = tlsPadding.getPaddingCount(paddedData, 0, paddedData.length);
-        assertThat(paddingCount, is(4));
+
+        Assertions.assertThrowsExactly(SSLException.class,
+                () -> tlsPadding.getPaddingCount(paddedData, 0, paddedData.length));
     }
 }

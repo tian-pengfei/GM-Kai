@@ -5,7 +5,7 @@ import net.gmkai.ProtocolVersion;
 import net.gmkai.TLSText;
 import net.gmkai.crypto.impl.bc.BcTLSCrypto;
 import net.gmkai.util.Hexs;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 

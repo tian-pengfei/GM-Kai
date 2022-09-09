@@ -7,7 +7,7 @@ import net.gmkai.crypto.TLSCryptoParameters;
 import net.gmkai.crypto.impl.bc.BcTLSCrypto;
 import net.gmkai.util.Bytes;
 import net.gmkai.util.Hexs;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
