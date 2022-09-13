@@ -2,6 +2,8 @@ package net.gmkai.crypto;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public interface TLSCrypto {
 
@@ -18,4 +20,9 @@ public interface TLSCrypto {
         }
         throw new SSLException("未支持其他类型加密");
     }
+
+    TLSSigner getTLSSigner(PrivateKey privateKey, SignatureAndHashAlg sigAndHashAlg);
+
+
+    TLSSignatureVerifier getTLSSignatureVerifier(PublicKey publicKey, SignatureAndHashAlg sigAndHashAlg);
 }
