@@ -14,9 +14,9 @@ public abstract class HandshakeMsg {
     HandshakeMsg() {
     }
 
-    HandshakeMsg(byte[] message) throws IOException {
-        checkMessageLength(message);
-        parse(ByteBuffer.wrap(message));
+    HandshakeMsg(ByteBuffer buffer) throws IOException {
+        checkMessageLength(buffer);
+        parse(buffer);
     }
 
     abstract HandshakeType getHandshakeType();
@@ -34,8 +34,8 @@ public abstract class HandshakeMsg {
 
     abstract int messageLength();
 
-    void checkMessageLength(byte[] message) throws SSLException {
-        if (message == null)
+    void checkMessageLength(ByteBuffer buffer) throws SSLException {
+        if (buffer == null)
             throw new SSLException("HandshakeMsg length is expected");
     }
 

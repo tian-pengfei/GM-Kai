@@ -26,7 +26,7 @@ public class CertificateNode extends HandshakeNode {
     @Override
     protected void doConsume(HandshakeContext handshakeContext, byte[] message) throws IOException {
 
-        CertificateMsg certificateMsg = new CertificateMsg(message);
+        CertificateMsg certificateMsg = new CertificateMsg(ByteBuffer.wrap(message));
         X509Certificate[] chain = certificateMsg.getX509Certificates();
         checkTrust(handshakeContext, chain);
         handshakeContext.setPeerCertChain(chain);
@@ -119,8 +119,8 @@ public class CertificateNode extends HandshakeNode {
 
         }
 
-        CertificateMsg(byte[] message) throws IOException {
-            super(message);
+        CertificateMsg(ByteBuffer buffer) throws IOException {
+            super(buffer);
         }
 
         @Override

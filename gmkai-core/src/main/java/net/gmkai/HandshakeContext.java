@@ -1,5 +1,7 @@
 package net.gmkai;
 
+import net.gmkai.crypto.TLSCrypto;
+
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLSession;
 import java.security.cert.X509Certificate;
@@ -12,13 +14,23 @@ public interface HandshakeContext {
 
     InternalX509TrustManager getX509TrustManager();
 
-    KeyManager getKeyManager() ;
+    KeyManager getKeyManager();
 
     void setPeerCertChain(X509Certificate[] chain);
 
-
     void setLocalCertChain(X509Certificate[] chain);
 
-    TLSCipherSuite getCurrentCipherSuite() ;
+    X509Certificate[] getPeerCertChain();
+
+    X509Certificate[] getLocalCertChain();
+
+    TLSCipherSuite getCurrentCipherSuite();
+
+
+    byte[] getClientRandom();
+
+    byte[] getServerRandom();
+
+    TLSCrypto getTLSCrypto();
 
 }

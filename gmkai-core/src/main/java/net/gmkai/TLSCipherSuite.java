@@ -16,11 +16,17 @@ public enum TLSCipherSuite {
     ECC_SM4_CBC_SM3("ECC_SM4_CBC_SM3"
             , 0xe013
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
-            , KeyExchangeAlg.ECC, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3),
+            , KeyExchangeAlg.K_ECC, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3),
+
     ECDHE_SM4_CBC_SM3("ECDHE_SM4_CBC_SM3"
             , 0xe011
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
-            , KeyExchangeAlg.ECDHE, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3);
+            , KeyExchangeAlg.K_ECDHE, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3),
+
+    RSA_SM4_CBC_SHA256("ECDHE_SM4_CBC_SM3"
+            , 0xe01c
+            , ProtocolVersion.PROTOCOLS_OF_GMSSLs
+            , KeyExchangeAlg.K_RSA, BulkCipherAlg.SM4_CBC, MacAlg.M_SHA256, HashAlg.H_SM3);
 
 
     public final String name;
@@ -77,7 +83,6 @@ public enum TLSCipherSuite {
                 return cs;
             }
         }
-
         return null;
     }
 

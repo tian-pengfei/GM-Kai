@@ -13,14 +13,14 @@ public abstract class HandshakeNode implements HandshakeProducer, HandshakeConsu
     }
 
     @Override
-    final public HandshakeMsg produce(HandshakeContext handshakeContext) throws SSLException {
+    final public HandshakeMsg produce(HandshakeContext handshakeContext) throws IOException {
         if (optional(handshakeContext) || consumable(handshakeContext)) throw new SSLException("");
         return doProduce(handshakeContext);
     }
 
     protected abstract void doConsume(HandshakeContext handshakeContext, byte[] message) throws IOException;
 
-    protected abstract HandshakeMsg doProduce(HandshakeContext handshakeContext) throws SSLException;
+    protected abstract HandshakeMsg doProduce(HandshakeContext handshakeContext) throws IOException;
 
     public final void doAfter(HandshakeContext handshakeContext) {
         if (consumable(handshakeContext)) {
