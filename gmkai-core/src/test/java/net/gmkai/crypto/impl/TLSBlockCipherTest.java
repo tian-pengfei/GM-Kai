@@ -8,11 +8,11 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public abstract class TLSBlockCipherImplTest {
+public abstract class TLSBlockCipherTest {
 
-    final private TLSBlockCipherImpl sm4Encrypt;
+    final private TLSBlockCipher sm4Encrypt;
 
-    final private TLSBlockCipherImpl sm4Decrypt;
+    final private TLSBlockCipher sm4Decrypt;
 
 
     final private static byte[] sm4Key = Hexs.decode("57f60a8036f3d35d62f23fefca74c203");
@@ -24,7 +24,7 @@ public abstract class TLSBlockCipherImplTest {
     final private static byte[] encryptData = Hexs.decode("1738f4813f63c7b5d863ec1efe0f0056");
 
 
-    public TLSBlockCipherImplTest(TLSBlockCipherImpl sm4Encrypt, TLSBlockCipherImpl sm4Decrypt) throws IOException {
+    public TLSBlockCipherTest(TLSBlockCipher sm4Encrypt, TLSBlockCipher sm4Decrypt) throws IOException {
         this.sm4Encrypt = sm4Encrypt;
         this.sm4Decrypt = sm4Decrypt;
         this.sm4Encrypt.setKey(sm4Key, 0, sm4Key.length);

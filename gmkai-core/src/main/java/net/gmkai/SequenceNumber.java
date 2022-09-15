@@ -6,7 +6,7 @@ public class SequenceNumber {
 
     private boolean exhausted = false;
 
-    synchronized long nextValue() {
+    public synchronized long nextValue() {
 
         long result = value;
         if (++value == 0) {

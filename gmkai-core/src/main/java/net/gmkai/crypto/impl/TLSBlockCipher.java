@@ -3,7 +3,7 @@ package net.gmkai.crypto.impl;
 import java.io.IOException;
 
 
-public interface TLSBlockCipherImpl {
+public interface TLSBlockCipher {
 
     void setKey(byte[] key, int keyOff, int keyLen) throws IOException;
 

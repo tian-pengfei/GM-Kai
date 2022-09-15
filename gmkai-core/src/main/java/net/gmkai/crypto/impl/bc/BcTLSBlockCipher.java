@@ -1,20 +1,21 @@
 package net.gmkai.crypto.impl.bc;
 
-import net.gmkai.crypto.impl.TLSBlockCipherImpl;
+import net.gmkai.crypto.impl.TLSBlockCipher;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import java.io.IOException;
 
-public class BcTLSBlockCipherImpl implements TLSBlockCipherImpl {
+public class BcTLSBlockCipher implements TLSBlockCipher {
 
     private final boolean isEncrypting;
+
     private final BlockCipher cipher;
 
     private KeyParameter key;
 
-    BcTLSBlockCipherImpl(BlockCipher cipher, boolean isEncrypting) {
+    BcTLSBlockCipher(BlockCipher cipher, boolean isEncrypting) {
         this.cipher = cipher;
         this.isEncrypting = isEncrypting;
     }

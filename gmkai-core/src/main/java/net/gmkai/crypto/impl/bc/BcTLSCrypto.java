@@ -51,17 +51,18 @@ public class BcTLSCrypto implements TLSCrypto {
     }
 
     @Override
-    public TLSBlockCipher createTLSBlockCipher(TLSCryptoParameters cryptoParameters) throws IOException {
-        if (cryptoParameters.getBulkCipherAlg().cipherType != TLSCipherType.BLOCK_CIPHER) {
+    public TLSTextBlockCipher createTLSTextBlockCipher(boolean forEncryption, TLSTextCryptoParameters tlsTextCryptoParameters) throws IOException {
+
+        if (tlsTextCryptoParameters.getBulkCipherAlg().cipherType != TLSCipherType.BLOCK_CIPHER) {
             throw new RuntimeException();
         }
-        BcTLSBlockCipherImpl encrypt = new BcTLSBlockCipherImpl(createBlockCipher(cryptoParameters.getBulkCipherAlg()), true);
-        BcTLSBlockCipherImpl decrypt = new BcTLSBlockCipherImpl(createBlockCipher(cryptoParameters.getBulkCipherAlg()), false);
+        BcTLSBlockCipher tlsBlockCipher = new BcTLSBlockCipher(createBlockCipher(tlsTextCryptoParameters.getBulkCipherAlg()), forEncryption);
+
         Padding padding = new TLSPadding();
 
-        return new TLSBlockCipher(cryptoParameters,
-                encrypt, decrypt, createHMAC(cryptoParameters.getMacAlg()), createHMAC(cryptoParameters.getMacAlg()),
-                cryptoParameters.getBulkCipherAlg().cipherKeySize, padding);
+        return new TLSTextBlockCipher(forEncryption, tlsTextCryptoParameters,
+                tlsBlockCipher, createHMAC(tlsTextCryptoParameters.getMacAlg()),
+                tlsTextCryptoParameters.getBulkCipherAlg().cipherKeySize, padding);
     }
 
 

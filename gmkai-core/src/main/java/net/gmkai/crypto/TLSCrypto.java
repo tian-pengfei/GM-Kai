@@ -11,13 +11,14 @@ public interface TLSCrypto {
 
     TLSHash createHash(HashAlg hashAlg);
 
-    TLSBlockCipher createTLSBlockCipher(TLSCryptoParameters cryptoParameters) throws IOException;
+    TLSTextBlockCipher createTLSTextBlockCipher(boolean forEncryption, TLSTextCryptoParameters tlsTextCryptoParameters) throws IOException;
 
-    default TLSCipher createTLSCipher(TLSCryptoParameters cryptoParameters) throws IOException {
+    default TLSTextCipher createTLSTextCipher(boolean forEncryption, TLSTextCryptoParameters tlsTextCryptoParameters) throws IOException {
 
-        if (cryptoParameters.getBulkCipherAlg().cipherType == TLSCipherType.BLOCK_CIPHER) {
-            return createTLSBlockCipher(cryptoParameters);
+        if (tlsTextCryptoParameters.getBulkCipherAlg().cipherType == TLSCipherType.BLOCK_CIPHER) {
+            return createTLSTextBlockCipher(forEncryption, tlsTextCryptoParameters);
         }
+
         throw new SSLException("未支持其他类型加密");
     }
 

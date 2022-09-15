@@ -19,40 +19,16 @@ public class TLSCryptoParameters {
 
     private final byte[] peerCryptoIv;
 
-    public byte[] getSelfMacKey() {
-        return selfMacKey;
+    public TLSTextCryptoParameters getReadTLSTextCryptoParameters() {
+        return new TLSTextCryptoParameters(bulkCipherAlg, macAlg, peerMackey, peerCryptoKey, peerCryptoIv);
     }
 
-    public byte[] getPeerMackey() {
-        return peerMackey;
-    }
-
-    public byte[] getSelfCryptoKey() {
-        return selfCryptoKey;
-    }
-
-    public byte[] getPeerCryptoKey() {
-        return peerCryptoKey;
-    }
-
-    public byte[] getSelfCryptoIv() {
-        return selfCryptoKeyIv;
-    }
-
-    public byte[] getPeerCryptoIv() {
-        return peerCryptoIv;
-    }
-
-    public BulkCipherAlg getBulkCipherAlg() {
-        return bulkCipherAlg;
+    public TLSTextCryptoParameters getWriteTLSTextCryptoParameters() {
+        return new TLSTextCryptoParameters(bulkCipherAlg, macAlg, selfMacKey, selfCryptoKey, selfCryptoKeyIv);
     }
 
     public MacAlg getMacAlg() {
         return macAlg;
-    }
-
-    public byte[] getSelfCryptoKeyIv() {
-        return selfCryptoKeyIv;
     }
 
     public TLSCryptoParameters(BulkCipherAlg bulkCipherAlg, MacAlg macAlg, byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoIv) {

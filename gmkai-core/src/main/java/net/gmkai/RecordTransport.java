@@ -1,6 +1,8 @@
 package net.gmkai;
 
-import net.gmkai.crypto.*;
+import net.gmkai.crypto.TLSCrypto;
+import net.gmkai.crypto.TLSCryptoParameters;
+import net.gmkai.crypto.TLSTextCipher;
 import net.gmkai.crypto.impl.TLSNullCipher;
 
 import javax.net.ssl.SSLException;
@@ -14,21 +16,17 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
 
     private final OutputStream outputStream;
 
-    private TLSCipher tlsCipher = TLSNullCipher.NULL_CIPHER;
+    private TLSTextCipher tlsReadCipher = TLSNullCipher.NULL_CIPHER;
 
-    private TLSReadCipher tlsReadCipher = tlsCipher;
-
-    private TLSWriteCipher tlsWriteCipher = tlsCipher;
-
-    private final SequenceNumber readSequenceNumber = new SequenceNumber();
-
-    private final SequenceNumber writeSequenceNumber = new SequenceNumber();
+    private TLSTextCipher tlsWriteCipher = TLSNullCipher.NULL_CIPHER;
 
     boolean readable = true;
 
     boolean writeable = true;
 
     private final TLSCrypto tlsCrypto;
+
+    TLSCryptoParameters tlsCryptoParameters;
 
     public RecordTransport(TLSCrypto tlsCrypto, InputStream inputStream, OutputStream outputStream) {
 
@@ -74,25 +72,24 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
         //触发事件
     }
 
-    public void updateCryptoParameters(TLSCryptoParameters parameters) throws IOException {
-        tlsCipher = tlsCrypto.createTLSCipher(parameters);
+    public void updateCryptoParameters(TLSCryptoParameters tlsCryptoParameters) {
+        this.tlsCryptoParameters = tlsCryptoParameters;
     }
 
-    public void updateWriteCipher() {
-        writeSequenceNumber.init();
-        tlsWriteCipher = tlsCipher;
+    public void updateWriteCipher() throws IOException {
+        tlsWriteCipher = tlsCrypto.
+                createTLSTextCipher(true, tlsCryptoParameters.getWriteTLSTextCryptoParameters());
     }
 
-    public void updateReadCipher() {
-        readSequenceNumber.init();
-        tlsReadCipher = tlsCipher;
+    public void updateReadCipher() throws IOException {
+        tlsReadCipher = tlsCrypto.
+                createTLSTextCipher(false, tlsCryptoParameters.getReadTLSTextCryptoParameters());
     }
 
     private void writeRecord(final ContentType contentType, final ProtocolVersion protocolVersion, final byte[] fragment) throws IOException {
         if (!writeable) throw new SSLException("");
 
-        TLSText tlsText = tlsWriteCipher.encryptTLSText(
-                writeSequenceNumber.nextValue(),
+        TLSText tlsText = tlsWriteCipher.processTLSText(
                 new TLSText(contentType, protocolVersion, fragment));
 
         byte[] data = tlsText.toBytes();
@@ -105,8 +102,7 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
 
         while (readable) {
 
-            tlsText = tlsReadCipher.decryptTLSText(readSequenceNumber.nextValue(),
-                    TLSText.readTLSText(inputStream));
+            tlsText = tlsReadCipher.processTLSText(TLSText.readTLSText(inputStream));
 
             if (contentType == tlsText.contentType) break;
 
