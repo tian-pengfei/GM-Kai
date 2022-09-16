@@ -5,6 +5,7 @@ import net.gmkai.util.Hexs;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -206,6 +207,21 @@ public abstract class TLSCryptoTest {
         testSignVerifier("EC", new ECGenParameterSpec("sm2p256v1"), SignatureAndHashAlg.SM2SIG_SM3);
 
     }
+
+    @Test
+    public void should_prf_with_sm3_hmac() throws SSLException {
+
+        byte[] seed = Hexs.decode("f6fcb0981ecdd22af52544a61dde35c0bc349df4a251e61fb9213be2fea652d7a50969145657c71abbffcda5e42f7ee02ae259a29997f83220e112de35e58a32");
+        byte[] key = Hexs.decode("0101095d0a8cebd25dcc88fc3065803b59c991c817ffd4ba0ef3a8474476bdb28d6fda9803cc96661b534381f3ae909f");
+        byte[] expectedResult = Hexs.decode("b85d8346cdd8a75939558fc35a4d2eef7ca053fc61e0bc07fea859723a2830774cd323366aa90a82ec3cfc8d9bc6be76");
+        String label = "master secret";
+
+        TLSPrf tlsPrf = tlsCrypto.createTLSPrf(MacAlg.M_SM3);
+
+        byte[] result = tlsPrf.prf(key, label, seed, key.length);
+        assertThat(result, is(expectedResult));
+    }
+
 
     private void testSignVerifier(String name, AlgorithmParameterSpec parameterSpec,
                                   SignatureAndHashAlg signatureAndHashAlg) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IOException {

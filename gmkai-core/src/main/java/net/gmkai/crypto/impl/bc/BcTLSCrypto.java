@@ -24,7 +24,10 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.*;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 public class BcTLSCrypto implements TLSCrypto {
 
@@ -98,8 +101,8 @@ public class BcTLSCrypto implements TLSCrypto {
     }
 
     @Override
-    public TLSRSACipher getTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey) {
-        return new BcTLSRSACipher(forEncryption, blockPadding, rsaKey);
+    public TLSRSACipher getTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, Key key) {
+        return new BcTLSRSACipher(forEncryption, blockPadding, key);
     }
 
     @Override

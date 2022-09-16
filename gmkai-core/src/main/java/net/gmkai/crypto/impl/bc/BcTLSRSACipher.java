@@ -12,8 +12,8 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.security.Key;
 import java.security.SecureRandom;
-import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -21,23 +21,23 @@ public class BcTLSRSACipher extends TLSRSACipher {
 
     private final AsymmetricBlockCipher asymmetricBlockCipher;
 
-    public BcTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey) {
+    public BcTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, Key key) {
 
-        this(forEncryption, blockPadding, rsaKey, new SecureRandom());
+        this(forEncryption, blockPadding, key, new SecureRandom());
     }
 
-    public BcTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey, SecureRandom secureRandom) {
+    public BcTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, Key key, SecureRandom secureRandom) {
 
-        super(forEncryption, blockPadding, rsaKey);
-
+        super(forEncryption, blockPadding, key);
 
         if (blockPadding == AsymmetricBlockPadding.PKCS1Padding) {
 
             asymmetricBlockCipher = new PKCS1Encoding(new RSABlindedEngine());
             asymmetricBlockCipher.init(forEncryption,
-                    new ParametersWithRandom(getRSAKeyParameters(rsaKey), secureRandom));
+                    new ParametersWithRandom(getRSAKeyParameters(key), secureRandom));
             return;
         }
+
         asymmetricBlockCipher = new RSAEngine();
     }
 
@@ -60,15 +60,15 @@ public class BcTLSRSACipher extends TLSRSACipher {
         }
     }
 
-    private RSAKeyParameters getRSAKeyParameters(RSAKey rsaKey) {
+    private RSAKeyParameters getRSAKeyParameters(Key key) {
 
-        if (rsaKey instanceof RSAPrivateKey) {
+        if (key instanceof RSAPrivateKey) {
 
-            return new RSAKeyParameters(true, rsaKey.getModulus(), ((RSAPrivateKey) rsaKey).getPrivateExponent());
+            return new RSAKeyParameters(true, ((RSAPrivateKey) key).getModulus(), ((RSAPrivateKey) key).getPrivateExponent());
         }
 
-        if (rsaKey instanceof RSAPublicKey) {
-            return new RSAKeyParameters(false, rsaKey.getModulus(), ((RSAPublicKey) rsaKey).getPublicExponent());
+        if (key instanceof RSAPublicKey) {
+            return new RSAKeyParameters(false, ((RSAPublicKey) key).getModulus(), ((RSAPublicKey) key).getPublicExponent());
         }
 
         throw new RuntimeException();

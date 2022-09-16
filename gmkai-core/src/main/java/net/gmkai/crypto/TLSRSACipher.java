@@ -1,7 +1,7 @@
 package net.gmkai.crypto;
 
 
-import java.security.interfaces.RSAKey;
+import java.security.Key;
 
 public abstract class TLSRSACipher implements TLSAsymmetricBlockCipher {
 
@@ -9,11 +9,11 @@ public abstract class TLSRSACipher implements TLSAsymmetricBlockCipher {
 
     protected final AsymmetricBlockPadding blockPadding;
 
-    protected final RSAKey rsaKey;
+    protected final Key key;
 
-    public TLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey) {
+    public TLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, Key key) {
         this.blockPadding = blockPadding;
-        this.rsaKey = rsaKey;
+        this.key = key;
         this.forEncryption = forEncryption;
     }
 
