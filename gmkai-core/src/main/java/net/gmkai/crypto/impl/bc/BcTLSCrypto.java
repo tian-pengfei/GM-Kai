@@ -18,8 +18,10 @@ import org.bouncycastle.crypto.signers.RSADigestSigner;
 import org.bouncycastle.crypto.signers.SM2Signer;
 import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 
+import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.*;
@@ -98,6 +100,11 @@ public class BcTLSCrypto implements TLSCrypto {
     @Override
     public TLSRSACipher getTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey) {
         return new BcTLSRSACipher(forEncryption, blockPadding, rsaKey);
+    }
+
+    @Override
+    public TLSSM2Cipher getTLSSM2Cipher(boolean forEncryption, Key key) throws SSLException {
+        return new BcTLSSM2Cipher(forEncryption, key);
     }
 
 

@@ -2,8 +2,10 @@ package net.gmkai.crypto;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 
 public interface TLSCrypto {
@@ -29,4 +31,7 @@ public interface TLSCrypto {
     TLSSignatureVerifier getTLSSignatureVerifier(PublicKey publicKey, SignatureAndHashAlg sigAndHashAlg);
 
     TLSRSACipher getTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey);
+
+    TLSSM2Cipher getTLSSM2Cipher(boolean forEncryption, Key key) throws SSLException;
+
 }

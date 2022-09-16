@@ -15,6 +15,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -55,12 +57,12 @@ public class TestHelper {
         }
     }
 
-    public static byte[] rsaDecrypt(RSAPrivateKey rsaPrivateKey, byte[] decryptText) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public static byte[] rsaDecrypt(RSAPrivateKey rsaPrivateKey, byte[] encryptedText) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding", BouncyCastleProvider.PROVIDER_NAME);
         cipher.init(Cipher.DECRYPT_MODE, rsaPrivateKey);
 
-        return cipher.doFinal(decryptText, 0, decryptText.length);
+        return cipher.doFinal(encryptedText, 0, encryptedText.length);
     }
 
     public static byte[] rsaEncrypt(RSAPublicKey rsaPublicKey, byte[] text) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
@@ -69,5 +71,25 @@ public class TestHelper {
         cipher.init(Cipher.ENCRYPT_MODE, rsaPublicKey);
 
         return cipher.doFinal(text, 0, text.length);
+    }
+
+    public static byte[] sm2Decrypt(ECPrivateKey ecPrivateKey, byte[] encryptedText) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance("SM2", BouncyCastleProvider.PROVIDER_NAME);
+        cipher.init(Cipher.DECRYPT_MODE, ecPrivateKey);
+
+        return cipher.doFinal(encryptedText, 0, encryptedText.length);
+    }
+
+    public static byte[] sm2Encrypt(ECPublicKey ecPublicKey, byte[] text) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance("SM2", BouncyCastleProvider.PROVIDER_NAME);
+        cipher.init(Cipher.ENCRYPT_MODE, ecPublicKey);
+
+        return cipher.doFinal(text, 0, text.length);
+    }
+
+    public static void main(String[] args) {
+
     }
 }
