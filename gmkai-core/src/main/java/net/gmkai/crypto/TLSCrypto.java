@@ -4,6 +4,7 @@ import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.RSAKey;
 
 public interface TLSCrypto {
 
@@ -26,4 +27,6 @@ public interface TLSCrypto {
 
 
     TLSSignatureVerifier getTLSSignatureVerifier(PublicKey publicKey, SignatureAndHashAlg sigAndHashAlg);
+
+    TLSRSACipher getTLSRSACipher(boolean forEncryption, AsymmetricBlockPadding blockPadding, RSAKey rsaKey);
 }
