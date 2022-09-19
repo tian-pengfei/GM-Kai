@@ -39,4 +39,8 @@ public interface HandshakeContext {
     byte[] getPreMasterSecret();
 
     void setMasterSecret(byte[] masterSecret);
+
+    byte[] getMasterSecret();
+
+    byte[] getHandshakeHash();
 }
