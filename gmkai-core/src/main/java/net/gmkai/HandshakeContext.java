@@ -26,6 +26,7 @@ public interface HandshakeContext {
 
     TLSCipherSuite getCurrentCipherSuite();
 
+    ProtocolVersion getCurrentProtocol();
 
     byte[] getClientRandom();
 
@@ -33,4 +34,9 @@ public interface HandshakeContext {
 
     TLSCrypto getTLSCrypto();
 
+    void setPreMasterSecret(byte[] preMasterSecret);
+
+    byte[] getPreMasterSecret();
+
+    void setMasterSecret(byte[] masterSecret);
 }

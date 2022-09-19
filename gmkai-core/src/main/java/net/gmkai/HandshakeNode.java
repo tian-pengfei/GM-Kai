@@ -22,7 +22,7 @@ public abstract class HandshakeNode implements HandshakeProducer, HandshakeConsu
 
     protected abstract HandshakeMsg doProduce(HandshakeContext handshakeContext) throws IOException;
 
-    public final void doAfter(HandshakeContext handshakeContext) {
+    public final void doAfter(HandshakeContext handshakeContext) throws SSLException {
         if (consumable(handshakeContext)) {
             doAfterConsume(handshakeContext);
             return;

@@ -7,6 +7,6 @@ public interface HandshakeProducer {
 
     HandshakeMsg produce(HandshakeContext handshakeContext) throws IOException;
 
-    void doAfterProduce(HandshakeContext handshakeContext);
+    void doAfterProduce(HandshakeContext handshakeContext) throws SSLException;
 
 }
