@@ -6,14 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import test.TestHelper;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 
@@ -46,22 +39,22 @@ public abstract class TLSSM2CipherTest {
     }
 
     @Test
-    public void should_sm2_encrypt() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
+    public void should_sm2_encrypt() throws Exception {
 
         TLSSM2Cipher tlssm2Cipher =
                 tlsCrypto.getTLSSM2Cipher(true, pubKey);
 
         byte[] encryptedText = tlssm2Cipher.processBlock(src, 0, src.length);
 
-        byte[] text = TestHelper.sm2Decrypt(priKey, encryptedText);
+        byte[] text = TestHelper.sm2DecryptWithDer(priKey, encryptedText);
         assertThat(text, is(src));
 
     }
 
     @Test
-    public void should_sm2_decrypt() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidKeyException {
+    public void should_sm2_decrypt() throws Exception {
 
-        byte[] encryptedText = TestHelper.sm2Encrypt(pubKey, src);
+        byte[] encryptedText = TestHelper.sm2EncryptWithDer(pubKey, src);
 
         TLSSM2Cipher tlssm2Cipher =
                 tlsCrypto.getTLSSM2Cipher(false, priKey);
