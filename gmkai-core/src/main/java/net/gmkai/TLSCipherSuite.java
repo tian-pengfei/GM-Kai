@@ -1,5 +1,6 @@
 package net.gmkai;
 
+import jdk.nashorn.internal.runtime.options.Option;
 import net.gmkai.crypto.BulkCipherAlg;
 import net.gmkai.crypto.HashAlg;
 import net.gmkai.crypto.KeyExchangeAlg;
@@ -7,6 +8,7 @@ import net.gmkai.crypto.MacAlg;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum TLSCipherSuite {
@@ -64,10 +66,10 @@ public enum TLSCipherSuite {
         return names;
     }
 
-    static TLSCipherSuite namesOf(String cipherSuite) {
+    static Optional<TLSCipherSuite> namesOf(String cipherSuite) {
 
         return Arrays.stream(values()).filter(c -> c.name.equals(cipherSuite)
-        ).findFirst().orElse(null);
+        ).findFirst();
     }
 
     static List<TLSCipherSuite> namesOf(String[] cipherSuites) {
@@ -77,13 +79,11 @@ public enum TLSCipherSuite {
                 .collect(Collectors.toList());
     }
 
-    public static TLSCipherSuite valueOf(int id) {
-        for (TLSCipherSuite cs : TLSCipherSuite.values()) {
-            if (cs.id == id) {
-                return cs;
-            }
-        }
-        return null;
+    public static Optional<TLSCipherSuite> valueOf(int id) {
+
+        return Arrays.stream(TLSCipherSuite.values()).
+                filter(cs->cs.id==id).
+                findFirst();
     }
 
 

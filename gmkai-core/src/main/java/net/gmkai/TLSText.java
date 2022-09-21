@@ -44,13 +44,14 @@ public class TLSText {
 
     static TLSText readTLSText(InputStream inputStream) throws IOException {
         int typeInt = inputStream.read();
-        if (typeInt == -1) throw new SSLException("inputString 已经结束");
+        if (typeInt == -1) throw new SSLException("inputStream already over");
 
         ContentType contentType = ContentType.valueOf(typeInt).orElseThrow(
-                () -> new SSLException("不存在这种类型"));
+                () -> new SSLException("failed to parse protocol contentType"));
 
         ProtocolVersion version = ProtocolVersion.valueOf(
-                ((inputStream.read() & 0xFF) << 8) | (inputStream.read() & 0xFF));
+                ((inputStream.read() & 0xFF) << 8) | (inputStream.read() & 0xFF)).
+                orElseThrow(() -> new SSLException("failed to parse protocol version"));
 
         int length = ((inputStream.read() & 0xFF) << 8)
                 | (inputStream.read() & 0xFF);
@@ -58,7 +59,6 @@ public class TLSText {
         byte[] fragment = safeRead(inputStream, length);
 
         return new TLSText(contentType, version, fragment);
-
     }
 
     static TLSText readTLSText(byte[] data) throws IOException {

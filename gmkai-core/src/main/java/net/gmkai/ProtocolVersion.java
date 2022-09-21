@@ -44,13 +44,12 @@ public enum ProtocolVersion {
                 .filter(pv -> pv.major == major && pv.minor == minor).findFirst();
     }
 
-    public static ProtocolVersion valueOf(int id) {
-        for (ProtocolVersion pv : ProtocolVersion.values()) {
-            if (pv.id == id) {
-                return pv;
-            }
-        }
-        return null;
+    public static Optional<ProtocolVersion> valueOf(int id) {
+
+        return Arrays.stream(ProtocolVersion.values()).
+                filter(pv -> pv.id == id).
+                findFirst();
+
     }
 
     public static final ProtocolVersion[] PROTOCOLS_OF_GMSSLs = new ProtocolVersion[]{
