@@ -16,13 +16,12 @@ import static org.mockito.Mockito.when;
 public class HandshakeNegotiatorTest {
 
 
-
     HandshakeMsgTransport handshakeMsgTransport;
 
     PreHandshakeContext preHandshakeContext;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
 
         this.preHandshakeContext = mock(PreHandshakeContext.class);
 
@@ -54,12 +53,13 @@ public class HandshakeNegotiatorTest {
                             "   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n" +
                             "   00 00 00 00 00 00 04 00 00 00 00 e0 13 00"));
 
-    public NegotiationResult expectedNegotiationResult =new NegotiationResult(
+    public NegotiationResult expectedNegotiationResult = new NegotiationResult(
             ProtocolVersion.TLCP11,
             new byte[32],
             new byte[32],
             new byte[4],
-            TLSCipherSuite.ECC_SM4_CBC_SM3,false); ;
+            TLSCipherSuite.ECC_SM4_CBC_SM3, false);
+
     @Test
     public void should_client_kick_start_to_tlcp11_server() throws IOException {
         when(handshakeMsgTransport.readHandshakeMsg()).thenReturn(server_hello_handshake_msg);

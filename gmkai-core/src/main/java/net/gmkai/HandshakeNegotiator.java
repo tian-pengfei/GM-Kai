@@ -78,26 +78,26 @@ public class HandshakeNegotiator {
         TLSText tlsText = transport.readHandshakeMsg();
         ByteBuffer byteBuffer = ByteBuffer.wrap(tlsText.fragment);
         HandshakeType handshakeType = HandshakeType.valueOf(byteBuffer.get()).
-                orElseThrow(()->new SSLException("unrecognized handshake type"));
+                orElseThrow(() -> new SSLException("unrecognized handshake type"));
 
-        if(handshakeType==HandshakeType.CLIENT_HELLO){
+        if (handshakeType == HandshakeType.CLIENT_HELLO) {
             return ByteBuffers.getBytes24(byteBuffer);
         }
-        throw  new SSLException("wrong handshake type");
+        throw new SSLException("wrong handshake type");
     }
 
     private byte[] getServerHelloMsgBody() throws IOException {
 
         GenericHandshakeMsg handshakeMsg = getHandshakeMsg();
-        if(handshakeMsg.getHandshakeType()==HandshakeType.SERVER_HELLO){
+        if (handshakeMsg.getHandshakeType() == HandshakeType.SERVER_HELLO) {
             return handshakeMsg.getBody();
         }
 
-        if(handshakeMsg.getHandshakeType()==HandshakeType.HELLO_REQUEST){
+        if (handshakeMsg.getHandshakeType() == HandshakeType.HELLO_REQUEST) {
             //todo
         }
 
-        throw  new SSLException("wrong handshake type");
+        throw new SSLException("wrong handshake type");
     }
 
 

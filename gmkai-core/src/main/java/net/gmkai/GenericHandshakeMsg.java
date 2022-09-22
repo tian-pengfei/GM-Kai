@@ -6,13 +6,13 @@ import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class GenericHandshakeMsg extends HandshakeMsg{
+public class GenericHandshakeMsg extends HandshakeMsg {
 
-    private  HandshakeType handshakeType;
+    private HandshakeType handshakeType;
 
-    private  byte[] body;
+    private byte[] body;
 
-    private GenericHandshakeMsg(HandshakeType handshakeType,byte[] body){
+    private GenericHandshakeMsg(HandshakeType handshakeType, byte[] body) {
         this.body = body;
         this.handshakeType = handshakeType;
     }
@@ -41,15 +41,15 @@ public class GenericHandshakeMsg extends HandshakeMsg{
         this.body = buffer.array();
     }
 
-     public static GenericHandshakeMsg getInstance(byte[] handshakeMsg) throws IOException {
+    public static GenericHandshakeMsg getInstance(byte[] handshakeMsg) throws IOException {
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(handshakeMsg);
-        HandshakeType handshakeType =  HandshakeType.valueOf(byteBuffer.get()).
-                orElseThrow(()-> new SSLException("unrecognized handshake type"));
+        HandshakeType handshakeType = HandshakeType.valueOf(byteBuffer.get()).
+                orElseThrow(() -> new SSLException("unrecognized handshake type"));
 
-       byte[] body = ByteBuffers.getBytes24(byteBuffer);
+        byte[] body = ByteBuffers.getBytes24(byteBuffer);
 
-       return new GenericHandshakeMsg(handshakeType,body) ;
+        return new GenericHandshakeMsg(handshakeType, body);
     }
 
 }

@@ -1,6 +1,5 @@
 package net.gmkai;
 
-import jdk.nashorn.internal.runtime.options.Option;
 import net.gmkai.crypto.BulkCipherAlg;
 import net.gmkai.crypto.HashAlg;
 import net.gmkai.crypto.KeyExchangeAlg;
@@ -82,7 +81,7 @@ public enum TLSCipherSuite {
     public static Optional<TLSCipherSuite> valueOf(int id) {
 
         return Arrays.stream(TLSCipherSuite.values()).
-                filter(cs->cs.id==id).
+                filter(cs -> cs.id == id).
                 findFirst();
     }
 
