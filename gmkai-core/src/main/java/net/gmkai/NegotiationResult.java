@@ -1,5 +1,6 @@
 package net.gmkai;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class NegotiationResult {
@@ -29,5 +30,18 @@ public class NegotiationResult {
         this.id = (long) reuse << 17 | (long) version.id << 16 | cipherSuite.id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NegotiationResult that = (NegotiationResult) o;
+        return reuse == that.reuse &&
+                id == that.id &&
+                version == that.version &&
+                cipherSuite == that.cipherSuite &&
+                Arrays.equals(clientRandom, that.clientRandom) &&
+                Arrays.equals(serverRandom, that.serverRandom) &&
+                Arrays.equals(sessionId, that.sessionId);
+    }
 
 }

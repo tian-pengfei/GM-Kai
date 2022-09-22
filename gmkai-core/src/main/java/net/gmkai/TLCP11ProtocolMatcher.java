@@ -43,7 +43,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
         SecureRandom secureRandom = preHandshakeContext.getSecureRandom();
 
         byte[] serverRandom = secureRandom.generateSeed(32);
-
+        handshakeNegotiatorSession.setServerRandom(serverRandom);
 
         byte[] sessionId = handshakeNegotiatorSession.getSessionId();
 
@@ -73,6 +73,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
             handshakeNegotiatorSession.setClientRandom(clientHelloMsg.random);
             handshakeNegotiatorSession.setTlsCipherSuite(tlsCipherSuite);
             handshakeNegotiatorSession.setCompressionMethod(compressionMethod);
+            handshakeNegotiatorSession.setProtocolVersion(ProtocolVersion.TLCP11);
 
             if (sessionId == clientHelloMsg.sessionId) {
                 handshakeNegotiatorSession.makeReusable();
@@ -90,7 +91,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
         SecureRandom secureRandom = preHandshakeContext.getSecureRandom();
 
-        return secureRandom.generateSeed(32);
+        return secureRandom.generateSeed(4);
     }
 
     @Override
@@ -119,7 +120,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
             }
 
             handshakeNegotiatorSession.setTlsCipherSuite(serverHelloMsg.tlsCipherSuite);
-
+            handshakeNegotiatorSession.setProtocolVersion(ProtocolVersion.TLCP11);
         } catch (Exception e) {
             return false;
         }
