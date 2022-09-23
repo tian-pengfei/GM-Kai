@@ -43,6 +43,12 @@ public class CertificateNode extends HandshakeNode {
     }
 
     @Override
+    public HandshakeType getHandshakeType() {
+
+        return HandshakeType.CERTIFICATE;
+    }
+
+    @Override
     public boolean consumable(HandshakeContext handshakeContext) {
         return optional.optional(handshakeContext);
     }

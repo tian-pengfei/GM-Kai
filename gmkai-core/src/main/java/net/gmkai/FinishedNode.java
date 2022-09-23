@@ -58,6 +58,11 @@ public class FinishedNode extends HandshakeNode {
     }
 
     @Override
+    public HandshakeType getHandshakeType() {
+        return HandshakeType.FINISHED;
+    }
+
+    @Override
     public boolean optional(HandshakeContext handshakeContext) {
         return false;
     }

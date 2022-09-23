@@ -22,5 +22,8 @@ public abstract class ServerKeyExchangeNode extends HandshakeNode {
 
     }
 
-
+    @Override
+    public HandshakeType getHandshakeType() {
+        return HandshakeType.SERVER_KEY_EXCHANGE;
+    }
 }

@@ -39,4 +39,9 @@ public abstract class ClientKeyExchangeNode extends HandshakeNode {
         handshakeContext.setMasterSecret(
                 tlsPrf.prf(preMasterSecret, "master secret", seed, preMasterSecret.length));
     }
+
+    @Override
+    public HandshakeType getHandshakeType() {
+        return HandshakeType.CLIENT_KEY_EXCHANGE;
+    }
 }

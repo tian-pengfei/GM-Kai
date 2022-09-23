@@ -26,6 +26,11 @@ public class ServerHelloDoneNode extends HandshakeNode {
     }
 
     @Override
+    public HandshakeType getHandshakeType() {
+        return HandshakeType.SERVER_HELLO_DONE;
+    }
+
+    @Override
     public boolean optional(HandshakeContext handshakeContext) {
         return false;
     }
