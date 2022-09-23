@@ -43,4 +43,6 @@ public interface HandshakeContext {
     byte[] getMasterSecret();
 
     byte[] getHandshakeHash();
+
+    boolean isNeedAuthClient();
 }
