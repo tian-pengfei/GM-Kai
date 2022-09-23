@@ -88,7 +88,7 @@ public class HandshakeNegotiator {
 
     private byte[] getServerHelloMsgBody() throws IOException {
 
-        GenericHandshakeMsg handshakeMsg = getHandshakeMsg();
+        HandshakeMsg handshakeMsg = getHandshakeMsg();
         if (handshakeMsg.getHandshakeType() == HandshakeType.SERVER_HELLO) {
             return handshakeMsg.getBody();
         }
@@ -101,10 +101,10 @@ public class HandshakeNegotiator {
     }
 
 
-    private GenericHandshakeMsg getHandshakeMsg() throws IOException {
+    private HandshakeMsg getHandshakeMsg() throws IOException {
 
         TLSText tlsText = transport.readHandshakeMsg();
 
-        return GenericHandshakeMsg.getInstance(tlsText.fragment);
+        return HandshakeMsg.getInstance(tlsText.fragment);
     }
 }
