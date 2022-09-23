@@ -129,7 +129,7 @@ public class CertificateNode extends HandshakeNode {
         }
 
         @Override
-        byte[] getMsgBytes() throws IOException {
+        byte[] getBody() throws IOException {
 
             byte[] message = new byte[messageLength()];
             ByteBuffer m = ByteBuffer.wrap(message);

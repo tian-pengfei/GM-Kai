@@ -92,7 +92,7 @@ public class FinishedNode extends HandshakeNode {
         }
 
         @Override
-        byte[] getMsgBytes() throws IOException {
+        byte[] getBody() throws IOException {
             return verifyData;
         }
 

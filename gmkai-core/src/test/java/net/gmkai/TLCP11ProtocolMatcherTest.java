@@ -80,7 +80,7 @@ public class TLCP11ProtocolMatcherTest {
 
         HandshakeMsg handshakeMsg =
                 protocolMatcher.createClientHello(preHandshakeContext, handshakeNegotiatorSession);
-        assertThat(handshakeMsg.getMsgBytes(), is(client_hello_msg));
+        assertThat(handshakeMsg.getBody(), is(client_hello_msg));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TLCP11ProtocolMatcherTest {
         HandshakeMsg handshakeMsg =
                 protocolMatcher.createServerHello(preHandshakeContext, handshakeNegotiatorSession);
 
-        assertThat(handshakeMsg.getMsgBytes(), is(server_hello_msg));
+        assertThat(handshakeMsg.getBody(), is(server_hello_msg));
 
     }
 

@@ -185,7 +185,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
         }
 
         @Override
-        byte[] getMsgBytes() throws IOException {
+        byte[] getBody() throws IOException {
             ByteBufferBuilder builder = ByteBufferBuilder.
                     bufferCapacity(messageLength()).
                     operate(putInt16(version.id)).
@@ -303,7 +303,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
         }
 
         @Override
-        byte[] getMsgBytes() throws IOException {
+        byte[] getBody() throws IOException {
 
             return ByteBufferBuilder.bufferCapacity(messageLength()).
                     operate(putInt16(serverVersion.id)).

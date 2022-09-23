@@ -21,16 +21,16 @@ public abstract class HandshakeMsg {
 
     abstract HandshakeType getHandshakeType();
 
-    public byte[] getProtocolFormat() throws IOException {
+    public byte[] getMsg() throws IOException {
 
         return ByteBufferBuilder.
                 bufferCapacity(1 + 3 + messageLength()).
                 operate(put(getHandshakeType().id)).
-                operate(putBytes24(getMsgBytes())).buildByteArray();
+                operate(putBytes24(getBody())).buildByteArray();
 
     }
 
-    abstract byte[] getMsgBytes() throws IOException;
+    abstract byte[] getBody() throws IOException;
 
     abstract int messageLength();
 

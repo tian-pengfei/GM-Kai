@@ -44,7 +44,7 @@ public class ServerHelloDoneNode extends HandshakeNode {
         }
 
         @Override
-        byte[] getMsgBytes() throws IOException {
+        byte[] getBody() throws IOException {
             return new byte[0];
         }
 

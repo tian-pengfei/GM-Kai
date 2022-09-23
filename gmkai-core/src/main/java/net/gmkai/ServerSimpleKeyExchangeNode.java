@@ -113,7 +113,7 @@ public class ServerSimpleKeyExchangeNode extends ServerKeyExchangeNode {
         }
 
         @Override
-        byte[] getMsgBytes() throws IOException {
+        byte[] getBody() throws IOException {
 
             return ByteBufferBuilder.
                     bufferCapacity(messageLength()).

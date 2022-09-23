@@ -36,7 +36,7 @@ public class HandshakeNegotiator {
 
         HandshakeMsg clientHelloMsg = matcher.createClientHello(preHandshakeContext, negotiatorSession);
 
-        transport.writeHandshakeMsg(clientHelloMsg.getProtocolFormat());
+        transport.writeHandshakeMsg(clientHelloMsg.getMsg());
 
         byte[] body = getServerHelloMsgBody();
 
@@ -64,7 +64,7 @@ public class HandshakeNegotiator {
 
             if (match) {
                 HandshakeMsg handshakeMsg = expectedMatcher.createServerHello(preHandshakeContext, negotiatorSession);
-                transport.writeHandshakeMsg(handshakeMsg.getProtocolFormat());
+                transport.writeHandshakeMsg(handshakeMsg.getMsg());
                 return negotiatorSession.getNegotiationResult();
             }
         }

@@ -65,7 +65,7 @@ public class FinishedNodeTest {
         when(handshakeContext.getHandshakeHash()).thenReturn(hash);
         when(handshakeContext.isClientMode()).thenReturn(isClient);
         HandshakeMsg handshakeMsg = finishedNode.doProduce(handshakeContext);
-        assertThat(handshakeMsg.getMsgBytes(), is(expectedMessage));
+        assertThat(handshakeMsg.getBody(), is(expectedMessage));
 
     }
 

@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 public class GenericHandshakeMsg extends HandshakeMsg {
 
-    private HandshakeType handshakeType;
+    private final HandshakeType handshakeType;
 
     private byte[] body;
 
@@ -17,17 +17,13 @@ public class GenericHandshakeMsg extends HandshakeMsg {
         this.handshakeType = handshakeType;
     }
 
-    public byte[] getBody() {
-        return body;
-    }
-
     @Override
     HandshakeType getHandshakeType() {
         return handshakeType;
     }
 
     @Override
-    byte[] getMsgBytes() throws IOException {
+    byte[] getBody() throws IOException {
         return body;
     }
 

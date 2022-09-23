@@ -89,7 +89,7 @@ public class ClientSimpleKeyExchangeNodeTest {
         when(handshakeContext.getCurrentCipherSuite()).thenReturn(tlsCipherSuite);
         when(handshakeContext.isClientMode()).thenReturn(true);
         when(handshakeContext.getPeerCertChain()).thenReturn(chain);
-        clientSimpleKeyExchangeNode.doProduce(handshakeContext).getMsgBytes();
+        clientSimpleKeyExchangeNode.doProduce(handshakeContext).getBody();
 
     }
 
