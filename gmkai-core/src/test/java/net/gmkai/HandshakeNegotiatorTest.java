@@ -20,6 +20,31 @@ public class HandshakeNegotiatorTest {
 
     PreHandshakeContext preHandshakeContext;
 
+    HandshakeMsg client_hello_handshake_msg =
+            HandshakeMsg.getInstance(Hexs.decode(
+                    "      01 00 00 2b 01 01 00 00 00 00 00 00 00 00 00 00\n" +
+                            "   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n" +
+                            "   00 00 00 00 00 00 00 00 04 e0 13 e0 11 01 00"));
+
+
+    HandshakeMsg server_hello_handshake_msg =
+            HandshakeMsg.getInstance(Hexs.decode(
+                    "      02 00 00 2a 01 01 00 00 00 00 00 00 00 00 00 00\n" +
+                            "   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n" +
+                            "   00 00 00 00 00 00 04 00 00 00 00 e0 13 00"));
+
+    public NegotiationResult expectedNegotiationResult = new NegotiationResult(
+            ProtocolVersion.TLCP11,
+            new byte[32],
+            new byte[32],
+            new byte[4],
+            TLSCipherSuite.ECC_SM4_CBC_SM3, false);
+
+    public HandshakeNegotiatorTest() throws IOException {
+
+    }
+
+
     @BeforeEach
     public void setUp() {
 
@@ -36,29 +61,6 @@ public class HandshakeNegotiatorTest {
                 CompressionMethod.NULL));
     }
 
-    TLSText client_hello_handshake_msg = new TLSText(
-            ContentType.HANDSHAKE,
-            ProtocolVersion.TLCP11,
-            Hexs.decode(
-                    "      01 00 00 2b 01 01 00 00 00 00 00 00 00 00 00 00\n" +
-                            "   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n" +
-                            "   00 00 00 00 00 00 00 00 04 e0 13 e0 11 01 00"));
-
-
-    TLSText server_hello_handshake_msg = new TLSText(
-            ContentType.HANDSHAKE,
-            ProtocolVersion.TLCP11,
-            Hexs.decode(
-                    "      02 00 00 2a 01 01 00 00 00 00 00 00 00 00 00 00\n" +
-                            "   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n" +
-                            "   00 00 00 00 00 00 04 00 00 00 00 e0 13 00"));
-
-    public NegotiationResult expectedNegotiationResult = new NegotiationResult(
-            ProtocolVersion.TLCP11,
-            new byte[32],
-            new byte[32],
-            new byte[4],
-            TLSCipherSuite.ECC_SM4_CBC_SM3, false);
 
     @Test
     public void should_client_kick_start_to_tlcp11_server() throws IOException {

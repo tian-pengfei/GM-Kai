@@ -1,11 +1,9 @@
 package net.gmkai;
 
 import com.google.common.collect.ImmutableList;
-import net.gmkai.util.ByteBuffers;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public class HandshakeNegotiator {
@@ -36,7 +34,7 @@ public class HandshakeNegotiator {
 
         HandshakeMsg clientHelloMsg = matcher.createClientHello(preHandshakeContext, negotiatorSession);
 
-        transport.writeHandshakeMsg(clientHelloMsg.getMsg());
+        transport.writeHandshakeMsg(clientHelloMsg);
 
         byte[] body = getServerHelloMsgBody();
 
@@ -64,7 +62,7 @@ public class HandshakeNegotiator {
 
             if (match) {
                 HandshakeMsg handshakeMsg = expectedMatcher.createServerHello(preHandshakeContext, negotiatorSession);
-                transport.writeHandshakeMsg(handshakeMsg.getMsg());
+                transport.writeHandshakeMsg(handshakeMsg);
                 return negotiatorSession.getNegotiationResult();
             }
         }
@@ -75,20 +73,17 @@ public class HandshakeNegotiator {
     private byte[] getClientHelloMsgBody() throws IOException {
 
 
-        TLSText tlsText = transport.readHandshakeMsg();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(tlsText.fragment);
-        HandshakeType handshakeType = HandshakeType.valueOf(byteBuffer.get()).
-                orElseThrow(() -> new SSLException("unrecognized handshake type"));
+        HandshakeMsg handshakeMsg = transport.readHandshakeMsg();
 
-        if (handshakeType == HandshakeType.CLIENT_HELLO) {
-            return ByteBuffers.getBytes24(byteBuffer);
+        if (handshakeMsg.getHandshakeType() == HandshakeType.CLIENT_HELLO) {
+            return handshakeMsg.getBody();
         }
         throw new SSLException("wrong handshake type");
     }
 
     private byte[] getServerHelloMsgBody() throws IOException {
 
-        HandshakeMsg handshakeMsg = getHandshakeMsg();
+        HandshakeMsg handshakeMsg = transport.readHandshakeMsg();
         if (handshakeMsg.getHandshakeType() == HandshakeType.SERVER_HELLO) {
             return handshakeMsg.getBody();
         }
@@ -100,11 +95,4 @@ public class HandshakeNegotiator {
         throw new SSLException("wrong handshake type");
     }
 
-
-    private HandshakeMsg getHandshakeMsg() throws IOException {
-
-        TLSText tlsText = transport.readHandshakeMsg();
-
-        return HandshakeMsg.getInstance(tlsText.fragment);
-    }
 }

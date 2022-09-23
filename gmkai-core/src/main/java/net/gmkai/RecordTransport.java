@@ -57,15 +57,17 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
     }
 
     @Override
-    public TLSText readHandshakeMsg() throws IOException {
+    public HandshakeMsg readHandshakeMsg() throws IOException {
 
-        return readRecord(ContentType.HANDSHAKE);
+        TLSText tlsText = readRecord(ContentType.HANDSHAKE);
+
+        return HandshakeMsg.getInstance(tlsText.fragment);
     }
 
     @Override
-    public void writeHandshakeMsg(final byte[] handshakeMsg) throws IOException {
+    public void writeHandshakeMsg(HandshakeMsg handshakeMsg) throws IOException {
 
-        writeRecord(ContentType.HANDSHAKE, ProtocolVersion.TLCP11, handshakeMsg);
+        writeRecord(ContentType.HANDSHAKE, ProtocolVersion.TLCP11, handshakeMsg.getMsg());
     }
 
     private void handleUnexpectedMsg(TLSText tlsText) throws SSLException {

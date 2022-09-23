@@ -23,17 +23,17 @@ public class HashableHandshakeMsgTransport implements Hashable, HandshakeMsgTran
     }
 
     @Override
-    public TLSText readHandshakeMsg() throws IOException {
-        TLSText tlsText = handshakeMsgTransport.readHandshakeMsg();
-        addData(tlsText.fragment);
-        return tlsText;
+    public HandshakeMsg readHandshakeMsg() throws IOException {
+        HandshakeMsg handshakeMsg = handshakeMsgTransport.readHandshakeMsg();
+        addData(handshakeMsg.getMsg());
+        return handshakeMsg;
     }
 
     @Override
-    public void writeHandshakeMsg(byte[] data) throws IOException {
+    public void writeHandshakeMsg(HandshakeMsg handshakeMsg) throws IOException {
 
-        handshakeMsgTransport.writeHandshakeMsg(data);
-        addData(data);
+        handshakeMsgTransport.writeHandshakeMsg(handshakeMsg);
+        addData(handshakeMsg.getMsg());
     }
 
     @Override

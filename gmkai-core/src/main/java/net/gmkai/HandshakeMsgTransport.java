@@ -5,7 +5,7 @@ import java.io.IOException;
 interface HandshakeMsgTransport {
 
 
-    TLSText readHandshakeMsg() throws IOException;
+    HandshakeMsg readHandshakeMsg() throws IOException;
 
-    void writeHandshakeMsg(final byte[] data) throws IOException;
+    void writeHandshakeMsg(HandshakeMsg handshakeMsg) throws IOException;
 }

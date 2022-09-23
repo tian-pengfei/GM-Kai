@@ -89,10 +89,9 @@ public class RecordTransportTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         RecordTransport recordTransport = new RecordTransport(tlsCrypto, inputStream, outputStream);
 
-        TLSText tlsText = recordTransport.readHandshakeMsg();
+        HandshakeMsg handshakeMsg = recordTransport.readHandshakeMsg();
 
-        assertThat(tlsText.contentType, is(ContentType.HANDSHAKE));
-        assertThat(tlsText.fragment, is(handshakeData));
+        assertThat(handshakeMsg.getMsg(), is(handshakeData));
     }
 
     @Test
@@ -103,10 +102,9 @@ public class RecordTransportTest {
         recordTransport.updateCryptoParameters(parameters);
         recordTransport.updateReadCipher();
 
-        TLSText tlsText = recordTransport.readHandshakeMsg();
+        HandshakeMsg handshakeMsg = recordTransport.readHandshakeMsg();
 
-        assertThat(tlsText.contentType, is(ContentType.HANDSHAKE));
-        assertThat(tlsText.fragment, is(revFinishData));
+        assertThat(handshakeMsg.getMsg(), is(revFinishData));
 
     }
 
@@ -117,7 +115,7 @@ public class RecordTransportTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         RecordTransport recordTransport = new RecordTransport(tlsCrypto, inputStream, outputStream);
 
-        recordTransport.writeHandshakeMsg(handshakeData);
+        recordTransport.writeHandshakeMsg(HandshakeMsg.getInstance(handshakeData));
 
         assertThat(outputStream.toByteArray(), is(handshakeRecord));
     }
@@ -131,7 +129,7 @@ public class RecordTransportTest {
         recordTransport.updateCryptoParameters(parameters);
         recordTransport.updateWriteCipher();
 
-        recordTransport.writeHandshakeMsg(sentFinishData);
+        recordTransport.writeHandshakeMsg(HandshakeMsg.getInstance(sentFinishData));
         assertThat(outputStream.toByteArray(), is(sentFinishRecord));
 
     }
@@ -144,7 +142,7 @@ public class RecordTransportTest {
         RecordTransport recordTransport = new RecordTransport(tlsCrypto, inputStream, outputStream);
         recordTransport.updateCryptoParameters(parameters);
         recordTransport.updateWriteCipher();
-        recordTransport.writeHandshakeMsg(sentFinishData);
+        recordTransport.writeHandshakeMsg(HandshakeMsg.getInstance(sentFinishData));
         assertThat(outputStream.toByteArray(), is(sentFinishRecord));
         outputStream.reset();
 
