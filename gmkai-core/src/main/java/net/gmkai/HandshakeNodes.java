@@ -2,6 +2,8 @@ package net.gmkai;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.net.ssl.SSLException;
+
 public class HandshakeNodes {
 
     final private ImmutableList<HandshakeNode> nodes;
@@ -14,6 +16,13 @@ public class HandshakeNodes {
     public HandshakeNodes(ImmutableList<HandshakeNode> nodes, long id) {
         this.nodes = nodes;
         this.id = id;
+    }
+
+    boolean isConsumableTopNode(HandshakeContext handshakeContext) throws SSLException {
+
+        if (pos == nodes.size()) throw new SSLException("All nodes have been executed ");
+
+        return nodes.get(pos).consumable(handshakeContext);
     }
 
     HandshakeNode popHandshakeNode() {
