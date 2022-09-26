@@ -2,7 +2,7 @@ package net.gmkai;
 
 import net.gmkai.crypto.TLSHash;
 
-public interface Hashable {
+public interface TransportHasher {
 
     byte[] getCurrentHash();
 

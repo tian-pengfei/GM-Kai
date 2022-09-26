@@ -17,6 +17,8 @@ public class FinishedNodeTest {
 
     private HandshakeContext handshakeContext;
 
+    private TransportHasher transportHasher;
+
     private final byte[] masterSecret = Hexs.decode("2f22754c7c03f6401ffa7b8c746ba62008ed4c6dd09e4a3668415214f99970bcc9adb1f2dccd2b35eb449db3b5a8803e");
 
     private final byte[] client_finish_message = Hexs.decode("42329c34e5c1e558c214e551");
@@ -33,7 +35,10 @@ public class FinishedNodeTest {
     @BeforeEach
     public void setUp() throws Exception {
         this.handshakeContext = mock(HandshakeContext.class);
+        this.transportHasher = mock(TransportHasher.class);
         when(handshakeContext.getTLSCrypto()).thenReturn(new BcTLSCrypto());
+        when(handshakeContext.getMasterSecret()).thenReturn(masterSecret);
+        when(handshakeContext.getTransportHasher()).thenReturn(transportHasher);
     }
 
     @Test
@@ -59,10 +64,8 @@ public class FinishedNodeTest {
     }
 
     private void should_product_finish_message(boolean isClient, byte[] hash, byte[] expectedMessage) throws IOException {
-
+        when(transportHasher.getCurrentHash()).thenReturn(hash);
         FinishedNode finishedNode = new FinishedNode(handshakeContext -> false);
-        when(handshakeContext.getMasterSecret()).thenReturn(masterSecret);
-        when(handshakeContext.getHandshakeHash()).thenReturn(hash);
         when(handshakeContext.isClientMode()).thenReturn(isClient);
         HandshakeMsg handshakeMsg = finishedNode.doProduce(handshakeContext);
         assertThat(handshakeMsg.getBody(), is(expectedMessage));
@@ -70,9 +73,8 @@ public class FinishedNodeTest {
     }
 
     private void should_consume_finish_message(boolean isClient, byte[] hash, byte[] message) throws IOException {
+        when(transportHasher.getPreHash()).thenReturn(hash);
         FinishedNode finishedNode = new FinishedNode(handshakeContext -> true);
-        when(handshakeContext.getMasterSecret()).thenReturn(masterSecret);
-        when(handshakeContext.getHandshakeHash()).thenReturn(hash);
         when(handshakeContext.isClientMode()).thenReturn(isClient);
         finishedNode.doConsume(handshakeContext, message);
     }

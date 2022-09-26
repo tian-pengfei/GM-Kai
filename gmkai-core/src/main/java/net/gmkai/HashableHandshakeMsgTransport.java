@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class HashableHandshakeMsgTransport implements Hashable, HandshakeMsgTransport {
+public class HashableHandshakeMsgTransport implements TransportHasher, HandshakeMsgTransport {
 
     private final List<byte[]> handshakeMsgs = new LinkedList<>();
 

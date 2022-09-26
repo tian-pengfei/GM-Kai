@@ -9,9 +9,9 @@ public class HandshakeExecutor {
 
     private final HandshakeContext handshakeContext;
 
-     static final String NOT_FOUND_CONSUME_NODE="a suitable consume-node could not be found";
-     static final String NOT_FOUND_PRODUCE_NODE="a suitable produce-node could not be found";
-     static final String WRONG_TYPE_NODE="node doesn't match the type of msg";
+    static final String NOT_FOUND_CONSUME_NODE = "a suitable consume-node could not be found";
+    static final String NOT_FOUND_PRODUCE_NODE = "a suitable produce-node could not be found";
+    static final String WRONG_TYPE_NODE = "node doesn't match the type of msg";
 
     public HandshakeExecutor(HandshakeMsgTransport transport, HandshakeContext handshakeContext) {
         this.transport = transport;

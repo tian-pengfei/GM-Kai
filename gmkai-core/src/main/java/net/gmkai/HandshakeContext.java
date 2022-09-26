@@ -42,7 +42,7 @@ public interface HandshakeContext {
 
     byte[] getMasterSecret();
 
-    byte[] getHandshakeHash();
+    TransportHasher getTransportHasher();
 
     boolean isNeedAuthClient();
 }

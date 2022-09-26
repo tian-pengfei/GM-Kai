@@ -39,7 +39,10 @@ public class FinishedNode extends HandshakeNode {
         String finishedLabel =
                 handshakeContext.isClientMode() ? SERVER_FINISHED_LABEL : CLIENT_FINISHED_LABEL;
 
-        byte[] expectedVerifyData = getVerifyData(handshakeContext, finishedLabel);
+        TransportHasher transportHasher = handshakeContext.getTransportHasher();
+        byte[] handshakeHash = transportHasher.getPreHash();
+        byte[] expectedVerifyData = getVerifyData(handshakeContext, handshakeHash, finishedLabel);
+
         if (!Arrays.equals(expectedVerifyData, finishedMsg.verifyData)) {
             throw new SSLException("");
         }
@@ -51,8 +54,9 @@ public class FinishedNode extends HandshakeNode {
 
         String finishedLabel =
                 handshakeContext.isClientMode() ? CLIENT_FINISHED_LABEL : SERVER_FINISHED_LABEL;
-
-        finishedMsg.verifyData = getVerifyData(handshakeContext, finishedLabel);
+        TransportHasher transportHasher = handshakeContext.getTransportHasher();
+        byte[] handshakeHash = transportHasher.getCurrentHash();
+        finishedMsg.verifyData = getVerifyData(handshakeContext, handshakeHash, finishedLabel);
 
         return finishedMsg;
     }
@@ -72,8 +76,8 @@ public class FinishedNode extends HandshakeNode {
 
     }
 
-    private byte[] getVerifyData(HandshakeContext handshakeContext, String finishedLabel) throws SSLException {
-        byte[] handshakeHash = handshakeContext.getHandshakeHash();
+    private byte[] getVerifyData(HandshakeContext handshakeContext, byte[] handshakeHash, String finishedLabel) throws SSLException {
+
         TLSCrypto tlsCrypto = handshakeContext.getTLSCrypto();
         TLSPrf prf = tlsCrypto.createTLSPrf(MacAlg.M_SM3);
 
