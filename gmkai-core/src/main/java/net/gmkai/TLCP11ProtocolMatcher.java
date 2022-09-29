@@ -102,11 +102,13 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
             verifyProtocolVersion(serverHelloMsg.serverVersion);
 
-            if (handshakeNegotiatorSession.getSessionId() == preHandshakeContext.getReusableSessionId()) {
-                handshakeNegotiatorSession.makeReusable();
-            }
+//            todo support reuse
+//            byte[] sessionId = handshakeNegotiatorSession.getSessionId();
+//            if (sessionId!=null&& Arrays.equals(handshakeNegotiatorSession.getSessionId(), sessionId)){
+//                handshakeNegotiatorSession.makeReusable();
+//                return true;
+//            }
 
-            handshakeNegotiatorSession.setServerRandom(serverHelloMsg.serverRandom);
             handshakeNegotiatorSession.setSessionId(serverHelloMsg.sessionId);
 
             if (!preHandshakeContext.getSupportCompressionMethods().contains(serverHelloMsg.compressionMethod)) {
@@ -121,6 +123,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
             handshakeNegotiatorSession.setTlsCipherSuite(serverHelloMsg.tlsCipherSuite);
             handshakeNegotiatorSession.setProtocolVersion(ProtocolVersion.TLCP11);
+            handshakeNegotiatorSession.setSslSession(createSession(preHandshakeContext, serverHelloMsg));
         } catch (Exception e) {
             return false;
         }
@@ -128,7 +131,11 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
         return true;
     }
 
-    void verifyProtocolVersion(ProtocolVersion actualProtocolVersion) throws SSLException {
+    private GMKaiExtendedSSLSession createSession(PreHandshakeContext preHandshakeContext, ServerHelloMsg serverHelloMsg) {
+        return preHandshakeContext.createSSLSession(serverHelloMsg.sessionId, serverHelloMsg.tlsCipherSuite, serverHelloMsg.compressionMethod);
+    }
+
+    private void verifyProtocolVersion(ProtocolVersion actualProtocolVersion) throws SSLException {
         if (protocolVersion != actualProtocolVersion) {
             throw new SSLException("not support this protocol version");
         }

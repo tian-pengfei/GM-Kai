@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +64,9 @@ public class TLCP11ProtocolMatcherTest {
         this.handshakeNegotiatorSession = mock(HandshakeNegotiatorSession.class);
         this.preHandshakeContext = mock(PreHandshakeContext.class);
 
-        when(preHandshakeContext.getReusableSessionId()).thenReturn(null);
+        when(preHandshakeContext.getClientReusableSessionId()).thenReturn(null);
+
+        when(preHandshakeContext.getSessionById(any())).thenReturn(null);
 
         when(preHandshakeContext.getSecureRandom()).thenReturn(new ZeroSecureRandom());
 

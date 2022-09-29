@@ -20,7 +20,6 @@ public class HandshakeExecutorTest {
     private HandshakeExecutor handshakeExecutor;
 
 
-
     @BeforeEach
     public void setUp() throws IOException {
 
@@ -39,16 +38,16 @@ public class HandshakeExecutorTest {
     @Test
     public void should_execute() throws IOException {
         HandshakeNodes handshakeNodes = new HandshakeNodes(ImmutableList.of(
-                new DummyNode(CERTIFICATE,true,false),
-                new DummyNode(SERVER_KEY_EXCHANGE,true,false),
-                new DummyNode(CERTIFICATE_REQUEST,true,true),
-                new DummyNode(SERVER_HELLO_DONE,true,false),
-                new DummyNode(CERTIFICATE,false,false),
-                new DummyNode(CLIENT_KEY_EXCHANGE,false,false),
-                new DummyNode(CERTIFICATE_VERIFY,false,false),
-                new DummyNode(FINISHED,false,false),
-                new DummyNode(FINISHED,true,false)
-        ),123L);
+                new DummyNode(CERTIFICATE, true, false),
+                new DummyNode(SERVER_KEY_EXCHANGE, true, false),
+                new DummyNode(CERTIFICATE_REQUEST, true, true),
+                new DummyNode(SERVER_HELLO_DONE, true, false),
+                new DummyNode(CERTIFICATE, false, false),
+                new DummyNode(CLIENT_KEY_EXCHANGE, false, false),
+                new DummyNode(CERTIFICATE_VERIFY, false, false),
+                new DummyNode(FINISHED, false, false),
+                new DummyNode(FINISHED, true, false)
+        ), 123L);
 
         handshakeExecutor.execute(handshakeNodes);
     }
@@ -56,100 +55,99 @@ public class HandshakeExecutorTest {
     @Test
     public void should_throw_exception_for_wrong_type_consume_node() {
         HandshakeNodes handshakeNodes = new HandshakeNodes(ImmutableList.of(
-                new DummyNode(CERTIFICATE,true,false),
-                new DummyNode(SERVER_KEY_EXCHANGE,true,false),
-                new DummyNode(CERTIFICATE_REQUEST,true,false),//wrong
-                new DummyNode(SERVER_HELLO_DONE,true,false),
-                new DummyNode(CERTIFICATE,false,true),
-                new DummyNode(CLIENT_KEY_EXCHANGE,false,false),
-                new DummyNode(CERTIFICATE_VERIFY,false,false),
-                new DummyNode(FINISHED,false,false),
-                new DummyNode(FINISHED,true,false)
-        ),123L);
+                new DummyNode(CERTIFICATE, true, false),
+                new DummyNode(SERVER_KEY_EXCHANGE, true, false),
+                new DummyNode(CERTIFICATE_REQUEST, true, false),//wrong
+                new DummyNode(SERVER_HELLO_DONE, true, false),
+                new DummyNode(CERTIFICATE, false, true),
+                new DummyNode(CLIENT_KEY_EXCHANGE, false, false),
+                new DummyNode(CERTIFICATE_VERIFY, false, false),
+                new DummyNode(FINISHED, false, false),
+                new DummyNode(FINISHED, true, false)
+        ), 123L);
 
         Throwable exception = Assertions.assertThrowsExactly(SSLException.class,
-                ()->handshakeExecutor.execute(handshakeNodes));
-        Assertions.assertEquals(WRONG_TYPE_NODE,exception.getMessage());
+                () -> handshakeExecutor.execute(handshakeNodes));
+        Assertions.assertEquals(WRONG_TYPE_NODE, exception.getMessage());
     }
 
     @Test
     public void should_throw_exception_for_not_found_produce_node_before_consume() {
         HandshakeNodes handshakeNodes = new HandshakeNodes(ImmutableList.of(
-                new DummyNode(CERTIFICATE,true,false),
-                new DummyNode(SERVER_KEY_EXCHANGE,true,false),
-                new DummyNode(CERTIFICATE_REQUEST,true,true),
-                new DummyNode(SERVER_HELLO_DONE,true,false),
-                new DummyNode(CERTIFICATE,false,false),
-                new DummyNode(CLIENT_KEY_EXCHANGE,false,false),
-                new DummyNode(CERTIFICATE_VERIFY,false,false),
-                new DummyNode(FINISHED,false,true),//wrong
-                new DummyNode(FINISHED,true,false)
-        ),123L);
+                new DummyNode(CERTIFICATE, true, false),
+                new DummyNode(SERVER_KEY_EXCHANGE, true, false),
+                new DummyNode(CERTIFICATE_REQUEST, true, true),
+                new DummyNode(SERVER_HELLO_DONE, true, false),
+                new DummyNode(CERTIFICATE, false, false),
+                new DummyNode(CLIENT_KEY_EXCHANGE, false, false),
+                new DummyNode(CERTIFICATE_VERIFY, false, false),
+                new DummyNode(FINISHED, false, true),//wrong
+                new DummyNode(FINISHED, true, false)
+        ), 123L);
 
         Throwable exception = Assertions.assertThrowsExactly(SSLException.class,
-                ()->handshakeExecutor.execute(handshakeNodes));
-        Assertions.assertEquals(NOT_FOUND_PRODUCE_NODE,exception.getMessage());
+                () -> handshakeExecutor.execute(handshakeNodes));
+        Assertions.assertEquals(NOT_FOUND_PRODUCE_NODE, exception.getMessage());
     }
 
     @Test
     public void should_throw_exception_for_not_found_consume_node_before_produce() {
         HandshakeNodes handshakeNodes = new HandshakeNodes(ImmutableList.of(
-                new DummyNode(CERTIFICATE,true,false),
-                new DummyNode(SERVER_KEY_EXCHANGE,true,false),
-                new DummyNode(CERTIFICATE_REQUEST,true,true),
+                new DummyNode(CERTIFICATE, true, false),
+                new DummyNode(SERVER_KEY_EXCHANGE, true, false),
+                new DummyNode(CERTIFICATE_REQUEST, true, true),
 //                new DummyNode(SERVER_HELLO_DONE,true,false), wrong
-                new DummyNode(CERTIFICATE,false,true),
-                new DummyNode(CLIENT_KEY_EXCHANGE,false,false),
-                new DummyNode(CERTIFICATE_VERIFY,false,false),
-                new DummyNode(FINISHED,false,false),
-                new DummyNode(FINISHED,true,false)
-        ),123L);
+                new DummyNode(CERTIFICATE, false, true),
+                new DummyNode(CLIENT_KEY_EXCHANGE, false, false),
+                new DummyNode(CERTIFICATE_VERIFY, false, false),
+                new DummyNode(FINISHED, false, false),
+                new DummyNode(FINISHED, true, false)
+        ), 123L);
 
         Throwable exception = Assertions.assertThrowsExactly(SSLException.class,
-                ()->handshakeExecutor.execute(handshakeNodes));
-        Assertions.assertEquals(NOT_FOUND_CONSUME_NODE,exception.getMessage());
+                () -> handshakeExecutor.execute(handshakeNodes));
+        Assertions.assertEquals(NOT_FOUND_CONSUME_NODE, exception.getMessage());
     }
 
     @Test
     public void should_throw_exception_for_not_found_consume_node_before_finished() {
         HandshakeNodes handshakeNodes = new HandshakeNodes(ImmutableList.of(
-                new DummyNode(CERTIFICATE,true,false),
-                new DummyNode(SERVER_KEY_EXCHANGE,true,false),
-                new DummyNode(CERTIFICATE_REQUEST,true,true),
-                new DummyNode(SERVER_HELLO_DONE,true,false),
-                new DummyNode(CERTIFICATE,false,true),
-                new DummyNode(CLIENT_KEY_EXCHANGE,false,false),
-                new DummyNode(CERTIFICATE_VERIFY,false,false),
-                new DummyNode(FINISHED,false,false),
-                new DummyNode(CERTIFICATE_REQUEST,true,true)//wrong
-        ),123L);
+                new DummyNode(CERTIFICATE, true, false),
+                new DummyNode(SERVER_KEY_EXCHANGE, true, false),
+                new DummyNode(CERTIFICATE_REQUEST, true, true),
+                new DummyNode(SERVER_HELLO_DONE, true, false),
+                new DummyNode(CERTIFICATE, false, true),
+                new DummyNode(CLIENT_KEY_EXCHANGE, false, false),
+                new DummyNode(CERTIFICATE_VERIFY, false, false),
+                new DummyNode(FINISHED, false, false),
+                new DummyNode(CERTIFICATE_REQUEST, true, true)//wrong
+        ), 123L);
 
         Throwable exception = Assertions.assertThrowsExactly(SSLException.class,
-                ()->handshakeExecutor.execute(handshakeNodes));
-        Assertions.assertEquals(NOT_FOUND_CONSUME_NODE,exception.getMessage());
+                () -> handshakeExecutor.execute(handshakeNodes));
+        Assertions.assertEquals(NOT_FOUND_CONSUME_NODE, exception.getMessage());
     }
 
     @Test
     public void should_throw_exception_for_not_found_produce_node_before_finished() {
         HandshakeNodes handshakeNodes = new HandshakeNodes(ImmutableList.of(
-                new DummyNode(CERTIFICATE,false,true)
-        ),123L);
+                new DummyNode(CERTIFICATE, false, true)
+        ), 123L);
 
         Throwable exception = Assertions.assertThrowsExactly(SSLException.class,
-                ()->handshakeExecutor.execute(handshakeNodes));
-        Assertions.assertEquals(NOT_FOUND_PRODUCE_NODE,exception.getMessage());
+                () -> handshakeExecutor.execute(handshakeNodes));
+        Assertions.assertEquals(NOT_FOUND_PRODUCE_NODE, exception.getMessage());
     }
 
 
-
-
-    private static class DummyMsg extends HandshakeMsg{
+    private static class DummyMsg extends HandshakeMsg {
 
         private final HandshakeType handshakeType;
 
-        public DummyMsg(HandshakeType handshakeType){
-            this.handshakeType  = handshakeType;
+        public DummyMsg(HandshakeType handshakeType) {
+            this.handshakeType = handshakeType;
         }
+
         @Override
         HandshakeType getHandshakeType() {
             return handshakeType;
@@ -172,22 +170,20 @@ public class HandshakeExecutorTest {
     }
 
 
+    private static class DummyNode extends HandshakeNode {
 
+        private final boolean consumable;
 
-
-    private static class DummyNode extends HandshakeNode{
-
-        private final boolean consumable ;
-
-        private final HandshakeType handshakeType ;
+        private final HandshakeType handshakeType;
 
         private final boolean optional;
 
-        public DummyNode(HandshakeType handshakeType,boolean consumable,boolean optional){
+        public DummyNode(HandshakeType handshakeType, boolean consumable, boolean optional) {
             this.consumable = consumable;
-            this.handshakeType  = handshakeType;
+            this.handshakeType = handshakeType;
             this.optional = optional;
         }
+
         @Override
         public boolean consumable(HandshakeContext handshakeContext) {
             return consumable;

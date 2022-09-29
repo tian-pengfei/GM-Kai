@@ -19,6 +19,8 @@ public class NegotiationResult {
 
     final long id;
 
+    GMKaiSSLSession sslSession;
+
     public NegotiationResult(ProtocolVersion version, byte[] clientRandom, byte[] serverRandom, byte[] sessionId, TLSCipherSuite cipherSuite, boolean reusable) {
         this.version = Objects.requireNonNull(version);
         this.clientRandom = Objects.requireNonNull(clientRandom);

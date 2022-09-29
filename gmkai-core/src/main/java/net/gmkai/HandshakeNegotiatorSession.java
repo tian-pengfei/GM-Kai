@@ -8,8 +8,9 @@ public class HandshakeNegotiatorSession {
 
     private byte[] sessionId;
 
-    private boolean reusable = false;
+    private GMKaiExtendedSSLSession sslSession;
 
+    private boolean reusable = false;
 
     private ProtocolVersion protocolVersion;
 
@@ -24,12 +25,14 @@ public class HandshakeNegotiatorSession {
     private HandshakeNegotiatorSession(byte[] clientRandom,
                                        byte[] serverRandom,
                                        byte[] sessionId,
+                                       GMKaiExtendedSSLSession sslSession,
                                        boolean reusable,
                                        ProtocolVersion protocolVersion,
                                        CompressionMethod compressionMethod) {
         this.clientRandom = clientRandom;
         this.serverRandom = serverRandom;
         this.sessionId = sessionId;
+        this.sslSession = sslSession;
         this.reusable = reusable;
         this.protocolVersion = protocolVersion;
         this.compressionMethod = compressionMethod;
@@ -75,7 +78,14 @@ public class HandshakeNegotiatorSession {
 
     public HandshakeNegotiatorSession clone() {
 
-        return new HandshakeNegotiatorSession(clientRandom, serverRandom, sessionId, reusable, protocolVersion, compressionMethod);
+        return new HandshakeNegotiatorSession(
+                clientRandom,
+                serverRandom,
+                sessionId,
+                sslSession,
+                reusable,
+                protocolVersion,
+                compressionMethod);
     }
 
     public ProtocolVersion getProtocolVersion() {
@@ -113,6 +123,14 @@ public class HandshakeNegotiatorSession {
     NegotiationResult getNegotiationResult() {
 
         return new NegotiationResult(protocolVersion, clientRandom, serverRandom, sessionId, tlsCipherSuite, reusable);
+    }
+
+    public GMKaiExtendedSSLSession getSslSession() {
+        return sslSession;
+    }
+
+    public void setSslSession(GMKaiExtendedSSLSession sslSession) {
+        this.sslSession = sslSession;
     }
 
 }

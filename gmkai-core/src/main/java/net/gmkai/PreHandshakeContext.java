@@ -13,10 +13,21 @@ public interface PreHandshakeContext {
 
     /**
      * if dont have ,return null
+     * only client call
      *
      * @return sessionId
      */
-    byte[] getReusableSessionId();
+    byte[] getClientReusableSessionId();
+
+    /**
+     * 是直接返回SessionContext呢？还是代理一下呢
+     *
+     * @param sessionId
+     * @return session
+     */
+    GMKaiExtendedSSLSession getSessionById(byte[] sessionId);
+
+    GMKaiExtendedSSLSession createSSLSession(byte[] sessionId, TLSCipherSuite tlsCipherSuite, CompressionMethod compressionMethod);
 
     SecureRandom getSecureRandom();
 }
