@@ -9,8 +9,12 @@ import java.util.stream.Collectors;
 public enum ProtocolVersion {
 
     NULL(0x0000, "NULL"),
-    TLCP11(0x0101, "TLCP1.1");
 
+    TLCP11(0x0101, "TLCP1.1"),
+
+    TLS13(0x0304, "TLSv1.3"),
+
+    TLS12(0x0303, "TLSv1.2");
     final int id;
 
     final String name;
