@@ -24,7 +24,7 @@ public enum TLSCipherSuite {
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
             , KeyExchangeAlg.K_ECDHE, BulkCipherAlg.SM4_CBC, MacAlg.M_SM3, HashAlg.H_SM3),
 
-    RSA_SM4_CBC_SHA256("ECDHE_SM4_CBC_SM3"
+    RSA_SM4_CBC_SHA256("RSA_SM4_CBC_SHA256"
             , 0xe01c
             , ProtocolVersion.PROTOCOLS_OF_GMSSLs
             , KeyExchangeAlg.K_RSA, BulkCipherAlg.SM4_CBC, MacAlg.M_SHA256, HashAlg.H_SM3);
