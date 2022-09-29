@@ -67,7 +67,7 @@ public enum ProtocolVersion {
     }
 
 
-    public static String[] nameOf(List<ProtocolVersion> protocolVersions) {
+    public static String[] namesOf(List<ProtocolVersion> protocolVersions) {
 
         if (protocolVersions == null) return new String[0];
 
@@ -82,7 +82,7 @@ public enum ProtocolVersion {
                 .findFirst();
     }
 
-    public static List<ProtocolVersion> nameOf(String[] protocolVersions) {
+    public static List<ProtocolVersion> namesOf(String[] protocolVersions) {
 
         return Arrays.stream(protocolVersions)
                 .map(ProtocolVersion::valueOf)
