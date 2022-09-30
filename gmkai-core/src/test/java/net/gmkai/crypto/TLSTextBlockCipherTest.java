@@ -19,7 +19,7 @@ public class TLSTextBlockCipherTest {
             .withSelfCryptoKeyIv(Hexs.decode("50d2cf238c7810793342a5013dc82f9a"))
             .withSelfMacKey(Hexs.decode("3e9f03413b91a8adf6519365490079a000d2dd4a052005853adf7fe7041ce13d"))
             .withPeerCryptoKey(Hexs.decode("8c06a8e3e890f677703956904453b386"))
-            .withPeerCryptoIv(Hexs.decode("871d2a1206d7a3e6e83fb238f5c95552"))
+            .withPeerCryptoKeyIv(Hexs.decode("871d2a1206d7a3e6e83fb238f5c95552"))
             .withPeerMackey(Hexs.decode("3be723bff1b758ec8335ea3ff988f43c5a9f194ca12560f9a52e6010f370fb57"))
             .withBulkCipherAlg(BulkCipherAlg.SM4_CBC)
             .withMacAlg(MacAlg.M_SM3)

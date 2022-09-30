@@ -17,10 +17,10 @@ public class TLSCryptoParameters {
 
     private final byte[] peerCryptoKey;
 
-    private final byte[] peerCryptoIv;
+    private final byte[] peerCryptoKeyIv;
 
     public TLSTextCryptoParameters getReadTLSTextCryptoParameters() {
-        return new TLSTextCryptoParameters(bulkCipherAlg, macAlg, peerMackey, peerCryptoKey, peerCryptoIv);
+        return new TLSTextCryptoParameters(bulkCipherAlg, macAlg, peerMackey, peerCryptoKey, peerCryptoKeyIv);
     }
 
     public TLSTextCryptoParameters getWriteTLSTextCryptoParameters() {
@@ -31,7 +31,7 @@ public class TLSCryptoParameters {
         return macAlg;
     }
 
-    public TLSCryptoParameters(BulkCipherAlg bulkCipherAlg, MacAlg macAlg, byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoIv) {
+    public TLSCryptoParameters(BulkCipherAlg bulkCipherAlg, MacAlg macAlg, byte[] selfMacKey, byte[] peerMackey, byte[] selfCryptoKey, byte[] selfCryptoKeyIv, byte[] peerCryptoKey, byte[] peerCryptoKeyIv) {
         this.bulkCipherAlg = bulkCipherAlg;
         this.macAlg = macAlg;
         this.selfMacKey = selfMacKey;
@@ -39,7 +39,7 @@ public class TLSCryptoParameters {
         this.selfCryptoKey = selfCryptoKey;
         this.selfCryptoKeyIv = selfCryptoKeyIv;
         this.peerCryptoKey = peerCryptoKey;
-        this.peerCryptoIv = peerCryptoIv;
+        this.peerCryptoKeyIv = peerCryptoKeyIv;
     }
 
     public static final class TLSCryptoParametersBuilder {
@@ -50,7 +50,7 @@ public class TLSCryptoParameters {
         private byte[] selfCryptoKey;
         private byte[] selfCryptoKeyIv;
         private byte[] peerCryptoKey;
-        private byte[] peerCryptoIv;
+        private byte[] peerCryptoKeyIv;
 
         private TLSCryptoParametersBuilder() {
         }
@@ -94,13 +94,13 @@ public class TLSCryptoParameters {
             return this;
         }
 
-        public TLSCryptoParametersBuilder withPeerCryptoIv(byte[] peerCryptoIv) {
-            this.peerCryptoIv = peerCryptoIv;
+        public TLSCryptoParametersBuilder withPeerCryptoKeyIv(byte[] peerCryptoKeyIv) {
+            this.peerCryptoKeyIv = peerCryptoKeyIv;
             return this;
         }
 
         public TLSCryptoParameters build() {
-            return new TLSCryptoParameters(bulkCipherAlg, macAlg, selfMacKey, peerMackey, selfCryptoKey, selfCryptoKeyIv, peerCryptoKey, peerCryptoIv);
+            return new TLSCryptoParameters(bulkCipherAlg, macAlg, selfMacKey, peerMackey, selfCryptoKey, selfCryptoKeyIv, peerCryptoKey, peerCryptoKeyIv);
         }
     }
 }
