@@ -54,6 +54,13 @@ public interface ByteBuffers {
         return b;
     }
 
+    static byte[] getBytes(ByteBuffer m, int len) throws IOException {
+        verifyLength(m, len);
+        byte[] b = new byte[len];
+        m.get(b);
+        return b;
+    }
+
     static byte[] getBytes24(ByteBuffer m) throws IOException {
         int len = getInt24(m);
         verifyLength(m, len);
