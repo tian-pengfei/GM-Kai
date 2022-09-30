@@ -2,15 +2,24 @@ package net.gmkai;
 
 import net.gmkai.crypto.TLSCrypto;
 import net.gmkai.crypto.TLSCryptoParameters;
+import net.gmkai.crypto.TLSPrf;
 import net.gmkai.crypto.TLSTextCipher;
 import net.gmkai.crypto.impl.TLSNullCipher;
+import net.gmkai.event.*;
+import net.gmkai.util.Bytes;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
-class RecordTransport implements ApplicationMsgTransport, AlertSender, HandshakeMsgTransport {
+import static net.gmkai.util.ByteBuffers.getBytes;
+
+class RecordTransport implements
+        ApplicationMsgTransport,
+        AlertSender,
+        HandshakeMsgTransport {
 
     private final InputStream inputStream;
 
@@ -26,21 +35,27 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
 
     private final TLSCrypto tlsCrypto;
 
-    TLSCryptoParameters tlsCryptoParameters;
+    private TLSCryptoParameters tlsCryptoParameters;
 
-    public RecordTransport(TLSCrypto tlsCrypto, InputStream inputStream, OutputStream outputStream) {
+    private ProtocolVersion protocolVersion = ProtocolVersion.TLCP11;
+
+    public RecordTransport(TLSEventBus eventBus, TLSCrypto tlsCrypto, InputStream inputStream, OutputStream outputStream) {
 
         this.tlsCrypto = tlsCrypto;
 
         this.inputStream = inputStream;
 
         this.outputStream = outputStream;
+
+        RecordListener recordListener = new RecordListener();
+
+        eventBus.register(recordListener);
     }
 
     @Override
     public void sendAlert(final byte[] alertMsg) throws IOException {
 
-        writeRecord(ContentType.ALERT, ProtocolVersion.TLCP11, alertMsg);
+        writeRecord(ContentType.ALERT, protocolVersion, alertMsg);
     }
 
     @Override
@@ -52,7 +67,7 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
     @Override
     public void writeApplicationMsg(final byte[] applicationMsg) throws IOException {
 
-        writeRecord(ContentType.APPLICATION_DATA, ProtocolVersion.TLCP11, applicationMsg);
+        writeRecord(ContentType.APPLICATION_DATA, protocolVersion, applicationMsg);
 
     }
 
@@ -67,23 +82,23 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
     @Override
     public void writeHandshakeMsg(HandshakeMsg handshakeMsg) throws IOException {
 
-        writeRecord(ContentType.HANDSHAKE, ProtocolVersion.TLCP11, handshakeMsg.getMsg());
+        writeRecord(ContentType.HANDSHAKE, protocolVersion, handshakeMsg.getMsg());
     }
 
     private void handleUnexpectedMsg(TLSText tlsText) throws SSLException {
         //触发事件
     }
 
-    public void updateCryptoParameters(TLSCryptoParameters tlsCryptoParameters) {
+    private void updateCryptoParameters(TLSCryptoParameters tlsCryptoParameters) {
         this.tlsCryptoParameters = tlsCryptoParameters;
     }
 
-    public void updateWriteCipher() throws IOException {
+    private void updateWriteCipher() throws IOException {
         tlsWriteCipher = tlsCrypto.
                 createTLSTextCipher(true, tlsCryptoParameters.getWriteTLSTextCryptoParameters());
     }
 
-    public void updateReadCipher() throws IOException {
+    private void updateReadCipher() throws IOException {
         tlsReadCipher = tlsCrypto.
                 createTLSTextCipher(false, tlsCryptoParameters.getReadTLSTextCryptoParameters());
     }
@@ -114,4 +129,84 @@ class RecordTransport implements ApplicationMsgTransport, AlertSender, Handshake
         return tlsText;
     }
 
+    private TLSCryptoParameters SecurityParameters2TLSCryptoParameters(SecurityParameters securityParameters) throws IOException {
+
+        TLSPrf prf = tlsCrypto.createTLSPrf(securityParameters.getMacAlg());
+
+        byte[] keyBlock = prf.prf(
+                securityParameters.getMasterSecret(),
+                "key expansion",
+                Bytes.concat(securityParameters.getServerRandom(), securityParameters.getClientRandom()),
+                128);
+
+
+        ByteBuffer keyBuffer = ByteBuffer.wrap(keyBlock);
+
+        if (securityParameters.getConnectionEnd() == ConnectionEnd.CLIENT) {
+
+            return TLSCryptoParameters.TLSCryptoParametersBuilder.aTLSCryptoParameters().
+                    withMacAlg(securityParameters.getMacAlg()).
+                    withBulkCipherAlg(securityParameters.getBulkCipherAlg()).
+
+                    withSelfMacKey(getBytes(keyBuffer, 32)).
+                    withPeerMackey(getBytes(keyBuffer, 32)).
+
+                    withSelfCryptoKey(getBytes(keyBuffer, 16)).
+                    withPeerCryptoKey(getBytes(keyBuffer, 16)).
+
+                    withSelfCryptoKeyIv(getBytes(keyBuffer, 16)).
+                    withPeerCryptoKeyIv(getBytes(keyBuffer, 16)).build();
+        }
+        return TLSCryptoParameters.TLSCryptoParametersBuilder.aTLSCryptoParameters().
+                withMacAlg(securityParameters.getMacAlg()).
+                withBulkCipherAlg(securityParameters.getBulkCipherAlg()).
+
+                withPeerMackey(getBytes(keyBuffer, 32)).
+                withSelfMacKey(getBytes(keyBuffer, 32)).
+
+                withPeerCryptoKey(getBytes(keyBuffer, 16)).
+                withSelfCryptoKey(getBytes(keyBuffer, 16)).
+
+                withPeerCryptoKeyIv(getBytes(keyBuffer, 16)).
+                withSelfCryptoKeyIv(getBytes(keyBuffer, 16)).build();
+    }
+
+    private class RecordListener implements ChangeWriteCipherListener,
+            ChangeReadCipherListener,
+            GenerateSecurityParametersFinishedListener,
+            DefiniteProtocolFinishedListener {
+
+
+        @Override
+        public void changeReadCipher(ChangeReadCipherEvent event) {
+            try {
+                updateReadCipher();
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void changeWriteCipher(ChangeWriteCipherEvent event) {
+            try {
+                updateWriteCipher();
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void DefiniteProtocol(DefiniteProtocolFinishedEvent event) {
+            protocolVersion = event.getProtocol();
+        }
+
+        @Override
+        public void setSecurityParameters(GenerateSecurityParametersFinishedEvent event) {
+            try {
+                updateCryptoParameters(SecurityParameters2TLSCryptoParameters(event.getSecurityParameters()));
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+    }
 }
