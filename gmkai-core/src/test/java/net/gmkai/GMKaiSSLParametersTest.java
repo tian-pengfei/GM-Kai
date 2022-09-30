@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.gmkai.ProtocolVersion.*;
-import static net.gmkai.ProtocolVersion.TLCP11;
 import static net.gmkai.TLSCipherSuite.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

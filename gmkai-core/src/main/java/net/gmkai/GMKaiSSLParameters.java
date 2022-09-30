@@ -3,7 +3,6 @@ package net.gmkai;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.SSLParameters;
 import java.util.List;
 
@@ -28,8 +27,6 @@ public class GMKaiSSLParameters implements Cloneable {
     private boolean clientMode;
 
     private boolean enableSessionCreation = false;
-
-    private final List<HandshakeCompletedListener> handshakeCompletedListeners = Lists.newLinkedList();
 
     private ClientAuthType clientAuthType = ClientAuthType.CLIENT_AUTH_NONE;
 
@@ -121,21 +118,12 @@ public class GMKaiSSLParameters implements Cloneable {
 
         gmKaiSSLParameters.enabledCipherSuites = Lists.newLinkedList(this.enabledCipherSuites);
         gmKaiSSLParameters.enabledProtocols = Lists.newLinkedList(this.enabledProtocols);
-        gmKaiSSLParameters.handshakeCompletedListeners.addAll(this.handshakeCompletedListeners);
         return gmKaiSSLParameters;
     }
 
     public void setEnabledProtocols(List<ProtocolVersion> protocols) {
         verifyProtocolVersion(protocols);
         this.enabledProtocols = protocols;
-    }
-
-    public void addHandshakeCompletedListener(HandshakeCompletedListener listener) {
-        handshakeCompletedListeners.add(listener);
-    }
-
-    public void removeHandshakeCompletedListener(HandshakeCompletedListener listener) {
-        handshakeCompletedListeners.remove(listener);
     }
 
     public void setEnableSessionCreation(boolean flag) {
