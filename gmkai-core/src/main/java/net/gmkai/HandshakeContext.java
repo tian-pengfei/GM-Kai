@@ -3,6 +3,7 @@ package net.gmkai;
 import net.gmkai.crypto.TLSCrypto;
 
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import java.security.cert.X509Certificate;
 
@@ -20,7 +21,7 @@ public interface HandshakeContext {
 
     void setLocalCertChain(X509Certificate[] chain);
 
-    X509Certificate[] getPeerCertChain();
+    X509Certificate[] getPeerCertChain() throws SSLException;
 
     X509Certificate[] getLocalCertChain();
 
@@ -45,4 +46,12 @@ public interface HandshakeContext {
     TransportHasher getTransportHasher();
 
     boolean isNeedAuthClient();
+
+    void notifySelfFinished();
+
+    void notifyPeerFinished();
+
+    void changeWriteCipherSpec();
+
+    void generateSecurityParameters();
 }
