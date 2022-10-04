@@ -34,9 +34,6 @@ public class GMKaiSSLSession implements GMKaiExtendedSSLSession {
 
     private byte[] masterSecrete;
 
-//    private final SecurityParameters.SecurityParametersBuilder parametersBuilder =
-//            SecurityParameters.SecurityParametersBuilder.aSecurityParameters();
-
     public GMKaiSSLSession(byte[] sessionId,
                            String peerHost,
                            int peerPort,
@@ -53,38 +50,27 @@ public class GMKaiSSLSession implements GMKaiExtendedSSLSession {
         this.compressionMethod = compressionMethod;
     }
 
-//    public void putClientRandom(byte[] clientRandom) {
-//        parametersBuilder.withClientRandom(clientRandom);
-//    }
-//
-//    public void putServerRandom(byte[] serverRandom) {
-//        parametersBuilder.withServerRandom(serverRandom);
-//    }
-
     public void putTLSCipherSuite(TLSCipherSuite tlsCipherSuite) {
         this.tlsCipherSuite = tlsCipherSuite;
     }
 
-    public void putMasterSecrete(byte[] masterSecrete) {
-        this.masterSecrete = masterSecrete;
+    @Override
+    public void putMasterSecret(byte[] masterSecret){
+        this.masterSecrete = masterSecret;
     }
 
-    public byte[] getMasterSecrete() {
+    @Override
+    public byte[] getMasterSecret() {
         return this.masterSecrete;
     }
 
+
+    @Override
     public void putPeerCertificate(Certificate[] peerCerts) {
         this.peerCerts = peerCerts;
     }
 
-
-//    public SecurityParameters getSecurityParameters() {
-//        if (securityParameters == null) {
-//            securityParameters = parametersBuilder.build();
-//        }
-//        return securityParameters;
-//    }
-
+    @Override
     public void putLocalCertificate(Certificate[] localCerts) {
         this.localCerts = localCerts;
     }

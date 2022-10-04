@@ -11,10 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 public class HandshakeAssemblerTest {
 
+    private  static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
+            new byte[]{0,0,0,0,0,0},
+            "0.0.0.0",
+            -1,
+            TLSCipherSuite.ECC_SM4_CBC_SM3,
+            CompressionMethod.NULL
+    );
     @Test
     public void should_assemble() throws SSLException {
 
         NegotiationResult negotiationResult = new NegotiationResult(
+                sslSession,
                 ProtocolVersion.TLCP11,
                 new byte[32],
                 new byte[32],
@@ -34,6 +42,7 @@ public class HandshakeAssemblerTest {
     public void should_assemble_by_no_identify_result() throws SSLException {
 
         NegotiationResult negotiationResult = new NegotiationResult(
+                sslSession,
                 ProtocolVersion.NULL,
                 new byte[32],
                 new byte[32],

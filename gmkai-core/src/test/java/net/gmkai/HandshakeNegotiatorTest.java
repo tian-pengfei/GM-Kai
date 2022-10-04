@@ -16,6 +16,14 @@ import static org.mockito.Mockito.when;
 public class HandshakeNegotiatorTest {
 
 
+    private  static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
+            new byte[]{0,0,0,0,0,0},
+            "0.0.0.0",
+            -1,
+            TLSCipherSuite.ECC_SM4_CBC_SM3,
+            CompressionMethod.NULL
+    );
+
     HandshakeMsgTransport handshakeMsgTransport;
 
     PreHandshakeContext preHandshakeContext;
@@ -34,6 +42,7 @@ public class HandshakeNegotiatorTest {
                             "   00 00 00 00 00 00 04 00 00 00 00 e0 13 00"));
 
     public NegotiationResult expectedNegotiationResult = new NegotiationResult(
+            sslSession,
             ProtocolVersion.TLCP11,
             new byte[32],
             new byte[32],

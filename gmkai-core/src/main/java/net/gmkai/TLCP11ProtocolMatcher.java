@@ -120,7 +120,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
             if (!preHandshakeContext.getSupportTLSCipherSuites().contains(serverHelloMsg.tlsCipherSuite)) {
                 throw new SSLException("not support compress cipher suite");
             }
-
+            handshakeNegotiatorSession.setServerRandom(serverHelloMsg.serverRandom);
             handshakeNegotiatorSession.setTlsCipherSuite(serverHelloMsg.tlsCipherSuite);
             handshakeNegotiatorSession.setProtocolVersion(ProtocolVersion.TLCP11);
             handshakeNegotiatorSession.setSslSession(createSession(preHandshakeContext, serverHelloMsg));

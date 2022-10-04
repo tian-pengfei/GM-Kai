@@ -5,23 +5,30 @@ import java.util.Objects;
 
 public class NegotiationResult {
 
-    final ProtocolVersion version;
+    public final ProtocolVersion version;
 
-    final TLSCipherSuite cipherSuite;
+    public final TLSCipherSuite cipherSuite;
     //1->resume
-    final int reuse;
+    public final int reuse;
 
-    final byte[] clientRandom;
+    public final byte[] clientRandom;
 
-    final byte[] serverRandom;
+    public final byte[] serverRandom;
 
-    final byte[] sessionId;
+    public final byte[] sessionId;
 
-    final long id;
+    public final long id;
 
-    GMKaiSSLSession sslSession;
+    GMKaiExtendedSSLSession sslSession;
 
-    public NegotiationResult(ProtocolVersion version, byte[] clientRandom, byte[] serverRandom, byte[] sessionId, TLSCipherSuite cipherSuite, boolean reusable) {
+    public NegotiationResult(GMKaiExtendedSSLSession sslSession,
+                             ProtocolVersion version,
+                             byte[] clientRandom,
+                             byte[] serverRandom,
+                             byte[] sessionId,
+                             TLSCipherSuite cipherSuite,
+                             boolean reusable) {
+        this.sslSession = sslSession;
         this.version = Objects.requireNonNull(version);
         this.clientRandom = Objects.requireNonNull(clientRandom);
         this.serverRandom = Objects.requireNonNull(serverRandom);
