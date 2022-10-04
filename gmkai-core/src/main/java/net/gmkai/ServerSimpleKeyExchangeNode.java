@@ -63,7 +63,7 @@ public class ServerSimpleKeyExchangeNode extends ServerKeyExchangeNode {
                 getTLSSigner(internalTLCPX509KeyManager.getPrivateKey(sigAlias), signatureAndHashAlg);
     }
 
-    private TLSSignatureVerifier getTLSSignatureVerifier(HandshakeContext handshakeContext) {
+    private TLSSignatureVerifier getTLSSignatureVerifier(HandshakeContext handshakeContext) throws SSLException {
 
         TLSCrypto tlsCrypto = handshakeContext.getTLSCrypto();
 

@@ -28,7 +28,7 @@ public class FinishedNode extends HandshakeNode {
 
     @Override
     public void doAfterConsume(HandshakeContext handshakeContext) throws SSLException {
-
+        handshakeContext.notifyPeerFinished();
     }
 
     @Override
@@ -50,6 +50,9 @@ public class FinishedNode extends HandshakeNode {
 
     @Override
     protected HandshakeMsg doProduce(HandshakeContext handshakeContext) throws IOException {
+        handshakeContext.generateSecurityParameters();
+        handshakeContext.changeWriteCipherSpec();
+
         FinishedMsg finishedMsg = new FinishedMsg();
 
         String finishedLabel =
@@ -73,7 +76,7 @@ public class FinishedNode extends HandshakeNode {
 
     @Override
     public void doAfterProduce(HandshakeContext handshakeContext) throws SSLException {
-
+        handshakeContext.notifySelfFinished();
     }
 
     private byte[] getVerifyData(HandshakeContext handshakeContext, byte[] handshakeHash, String finishedLabel) throws SSLException {
