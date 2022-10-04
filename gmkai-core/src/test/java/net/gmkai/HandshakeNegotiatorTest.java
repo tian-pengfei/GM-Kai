@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,7 +18,7 @@ public class HandshakeNegotiatorTest {
 
 
     private  static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
-            new byte[]{0,0,0,0,0,0},
+            new byte[]{0,0,0,0},
             "0.0.0.0",
             -1,
             TLSCipherSuite.ECC_SM4_CBC_SM3,
@@ -65,6 +66,8 @@ public class HandshakeNegotiatorTest {
                 TLSCipherSuite.ECC_SM4_CBC_SM3));
 
         when(preHandshakeContext.getSecureRandom()).thenReturn(new ZeroSecureRandom());
+
+        when(preHandshakeContext.createSSLSession(any(),any(),any())).thenReturn(sslSession);
 
         when(preHandshakeContext.getSupportCompressionMethods()).thenReturn(Lists.newArrayList(
                 CompressionMethod.NULL));

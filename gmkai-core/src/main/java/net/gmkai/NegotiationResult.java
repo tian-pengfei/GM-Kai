@@ -28,7 +28,7 @@ public class NegotiationResult {
                              byte[] sessionId,
                              TLSCipherSuite cipherSuite,
                              boolean reusable) {
-        this.sslSession = sslSession;
+        this.sslSession = Objects.requireNonNull(sslSession);
         this.version = Objects.requireNonNull(version);
         this.clientRandom = Objects.requireNonNull(clientRandom);
         this.serverRandom = Objects.requireNonNull(serverRandom);

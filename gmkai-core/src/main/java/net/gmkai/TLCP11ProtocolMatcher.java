@@ -66,18 +66,14 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
             CompressionMethod compressionMethod = chooseCompressionMethod(clientHelloMsg.compressionMethods);
 
-            byte[] sessionId = chooseSessionId(preHandshakeContext, clientHelloMsg.sessionId);
+            setSessionId(handshakeNegotiatorSession,preHandshakeContext, clientHelloMsg.sessionId);
 
-            handshakeNegotiatorSession.setSessionId(sessionId);
             handshakeNegotiatorSession.setProtocolVersion(clientHelloMsg.version);
             handshakeNegotiatorSession.setClientRandom(clientHelloMsg.random);
             handshakeNegotiatorSession.setTlsCipherSuite(tlsCipherSuite);
             handshakeNegotiatorSession.setCompressionMethod(compressionMethod);
             handshakeNegotiatorSession.setProtocolVersion(ProtocolVersion.TLCP11);
 
-            if (sessionId == clientHelloMsg.sessionId) {
-                handshakeNegotiatorSession.makeReusable();
-            }
 
         } catch (Exception e) {
 
@@ -86,12 +82,16 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
         return true;
     }
 
-    private byte[] chooseSessionId(PreHandshakeContext preHandshakeContext, byte[] sessionId) {
+    private void setSessionId(HandshakeNegotiatorSession handshakeNegotiatorSession,PreHandshakeContext preHandshakeContext, byte[] sessionId) {
         //todo  supported session reuse
 
         SecureRandom secureRandom = preHandshakeContext.getSecureRandom();
 
-        return secureRandom.generateSeed(4);
+        GMKaiExtendedSSLSession sslSession = preHandshakeContext.createSSLSession(secureRandom.generateSeed(4),
+                handshakeNegotiatorSession.getTlsCipherSuite(),handshakeNegotiatorSession.getCompressionMethod());
+        handshakeNegotiatorSession.setSslSession(sslSession);
+        handshakeNegotiatorSession.setSessionId(sslSession.getId());
+
     }
 
     @Override
