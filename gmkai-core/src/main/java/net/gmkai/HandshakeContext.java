@@ -4,12 +4,9 @@ import net.gmkai.crypto.TLSCrypto;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
 import java.security.cert.X509Certificate;
 
 public interface HandshakeContext {
-
-    SSLSession getHandshakeSession();
 
     boolean isClientMode();
 

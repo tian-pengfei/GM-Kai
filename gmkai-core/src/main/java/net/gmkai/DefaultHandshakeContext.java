@@ -46,12 +46,6 @@ public class DefaultHandshakeContext implements HandshakeContext {
 
     }
 
-
-    @Override
-    public GMKaiExtendedSSLSession getHandshakeSession() {
-        return sslSession;
-    }
-
     @Override
     public boolean isClientMode() {
         return gmKaiSSLParameters.getUseClientMode();
