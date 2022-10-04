@@ -3,6 +3,7 @@ package net.gmkai;
 import net.gmkai.crypto.TLSCrypto;
 
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLSessionContext;
 import javax.net.ssl.X509ExtendedTrustManager;
 import java.security.SecureRandom;
 
@@ -15,9 +16,9 @@ public class ContextData {
 
     private final SecureRandom secureRandom;
 
-    private final GMKaiSSLSessionContext serverSSLSessionContext;
+    private final SSLSessionContext serverSSLSessionContext;
 
-    private final GMKaiSSLSessionContext clientSSLSessionContext;
+    private final SSLSessionContext clientSSLSessionContext;
 
     private final TLSCrypto tlsCrypto;
 
@@ -26,8 +27,8 @@ public class ContextData {
     private final GMKaiSSLParameters defaultClientSSLParameters;
 
 
-    ContextData(GMKaiSSLSessionContext serverSSLSessionContext,
-                GMKaiSSLSessionContext clientSSLSessionContext,
+    ContextData(SSLSessionContext serverSSLSessionContext,
+                SSLSessionContext clientSSLSessionContext,
                 KeyManager keyManager,
                 X509ExtendedTrustManager trustManager,
                 SecureRandom secureRandom,
@@ -71,11 +72,11 @@ public class ContextData {
         return defaultClientSSLParameters.clone();
     }
 
-    public GMKaiSSLSessionContext getClientSSLSessionConText() {
+    public SSLSessionContext getClientSSLSessionConText() {
         return clientSSLSessionContext;
     }
 
-    public GMKaiSSLSessionContext getServerSSLSessionConText() {
+    public SSLSessionContext getServerSSLSessionConText() {
         return serverSSLSessionContext;
     }
 
