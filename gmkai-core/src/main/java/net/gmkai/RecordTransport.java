@@ -19,7 +19,8 @@ import static net.gmkai.util.ByteBuffers.getBytes;
 class RecordTransport implements
         ApplicationMsgTransport,
         AlertSender,
-        HandshakeMsgTransport {
+        HandshakeMsgTransport,
+        ChangeCipherSpecTransport {
 
     private final InputStream inputStream;
 
@@ -53,9 +54,9 @@ class RecordTransport implements
     }
 
     @Override
-    public void sendAlert(final byte[] alertMsg) throws IOException {
+    public void sendAlert(final AlertMsg alertMsg) throws IOException {
 
-        writeRecord(ContentType.ALERT, protocolVersion, alertMsg);
+        writeRecord(ContentType.ALERT, protocolVersion, alertMsg.toBytes());
     }
 
     @Override
@@ -169,6 +170,11 @@ class RecordTransport implements
 
                 withPeerCryptoKeyIv(getBytes(keyBuffer, 16)).
                 withSelfCryptoKeyIv(getBytes(keyBuffer, 16)).build();
+    }
+
+    @Override
+    public void writeChangeCipherSpec() throws IOException {
+        writeRecord(ContentType.CHANGE_CIPHER_SPEC, protocolVersion, new byte[]{0x01});
     }
 
     private class RecordListener implements ChangeWriteCipherListener,
