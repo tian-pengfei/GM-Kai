@@ -122,7 +122,7 @@ public class HandshakeNegotiatorSession {
 
     NegotiationResult getNegotiationResult() {
 
-        return new NegotiationResult(sslSession,protocolVersion, clientRandom, serverRandom, sessionId, tlsCipherSuite, reusable);
+        return new NegotiationResult(sslSession, protocolVersion, clientRandom, serverRandom, sessionId, tlsCipherSuite, reusable);
     }
 
     public GMKaiExtendedSSLSession getSslSession() {
