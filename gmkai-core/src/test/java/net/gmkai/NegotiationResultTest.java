@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.is;
 
 public class NegotiationResultTest {
 
-    private  static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
-            new byte[]{0,0,0,0,0,0},
+    private static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
+            new byte[]{0, 0, 0, 0, 0, 0},
             "0.0.0.0",
             -1,
             TLSCipherSuite.ECC_SM4_CBC_SM3,

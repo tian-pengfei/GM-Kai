@@ -11,13 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 public class HandshakeAssemblerTest {
 
-    private  static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
-            new byte[]{0,0,0,0,0,0},
+    private static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
+            new byte[]{0, 0, 0, 0, 0, 0},
             "0.0.0.0",
             -1,
             TLSCipherSuite.ECC_SM4_CBC_SM3,
             CompressionMethod.NULL
     );
+
     @Test
     public void should_assemble() throws SSLException {
 

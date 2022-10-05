@@ -14,11 +14,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+//todo 按照规范生成随机数
 public class HandshakeNegotiatorTest {
 
 
-    private  static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
-            new byte[]{0,0,0,0},
+    private static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
+            new byte[]{0, 0, 0, 0},
             "0.0.0.0",
             -1,
             TLSCipherSuite.ECC_SM4_CBC_SM3,
@@ -67,7 +68,7 @@ public class HandshakeNegotiatorTest {
 
         when(preHandshakeContext.getSecureRandom()).thenReturn(new ZeroSecureRandom());
 
-        when(preHandshakeContext.createSSLSession(any(),any(),any())).thenReturn(sslSession);
+        when(preHandshakeContext.createSSLSession(any(), any(), any())).thenReturn(sslSession);
 
         when(preHandshakeContext.getSupportCompressionMethods()).thenReturn(Lists.newArrayList(
                 CompressionMethod.NULL));

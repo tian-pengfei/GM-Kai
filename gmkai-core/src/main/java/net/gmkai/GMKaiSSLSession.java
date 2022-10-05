@@ -55,7 +55,7 @@ public class GMKaiSSLSession implements GMKaiExtendedSSLSession {
     }
 
     @Override
-    public void putMasterSecret(byte[] masterSecret){
+    public void putMasterSecret(byte[] masterSecret) {
         this.masterSecrete = masterSecret;
     }
 
