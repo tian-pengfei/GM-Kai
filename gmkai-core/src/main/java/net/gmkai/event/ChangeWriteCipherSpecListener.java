@@ -7,5 +7,5 @@ import java.io.IOException;
 public interface ChangeWriteCipherSpecListener extends TLSListener {
 
     @Subscribe
-    void handleChangeWriteCipherSpec() throws IOException;
+    void handleChangeWriteCipherSpec(ChangeWriteCipherSpecEvent changeWriteCipherSpecEvent) throws IOException;
 }
