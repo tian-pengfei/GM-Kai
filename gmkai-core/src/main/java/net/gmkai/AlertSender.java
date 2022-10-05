@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface AlertSender {
 
-    void sendAlert(final byte[] data) throws IOException;
+    void sendAlert(final AlertMsg alertMsg) throws IOException;
 }
