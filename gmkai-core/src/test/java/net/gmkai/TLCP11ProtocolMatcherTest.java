@@ -58,6 +58,13 @@ public class TLCP11ProtocolMatcherTest {
                     "   00 00 00 00 00 00 0b 00 04 03 00 01 02 00 10 00\n" +
                     "   0b 00 09 08 68 74 74 70 2f 31 2e 31 00 17 00 00");
 
+    private static final GMKaiExtendedSSLSession sslSession = new GMKaiSSLSession(
+            new byte[]{0, 0, 0, 0},
+            "0.0.0.0",
+            -1,
+            TLSCipherSuite.ECC_SM4_CBC_SM3,
+            CompressionMethod.NULL
+    );
 
     @BeforeEach
     public void setup() {
@@ -75,6 +82,9 @@ public class TLCP11ProtocolMatcherTest {
 
         when(preHandshakeContext.getSupportCompressionMethods()).
                 thenReturn(Lists.newArrayList(CompressionMethod.NULL));
+
+        when(preHandshakeContext.createSSLSession(any(), any(), any())).thenReturn(sslSession);
+
     }
 
     @Test

@@ -10,12 +10,16 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static net.gmkai.util.BufferWriteOperations.*;
 
 public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
     private static final ProtocolVersion protocolVersion = ProtocolVersion.TLCP11;
+
+    private Logger LOG = Logger.getLogger(TLCP11ProtocolMatcher.class.getName());
 
     @Override
     public HandshakeMsg createClientHello(PreHandshakeContext preHandshakeContext, HandshakeNegotiatorSession handshakeNegotiatorSession) {
@@ -66,7 +70,7 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
             CompressionMethod compressionMethod = chooseCompressionMethod(clientHelloMsg.compressionMethods);
 
-            setSessionId(handshakeNegotiatorSession,preHandshakeContext, clientHelloMsg.sessionId);
+            setSessionId(handshakeNegotiatorSession, preHandshakeContext, clientHelloMsg.sessionId);
 
             handshakeNegotiatorSession.setProtocolVersion(clientHelloMsg.version);
             handshakeNegotiatorSession.setClientRandom(clientHelloMsg.random);
@@ -76,19 +80,19 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
 
         } catch (Exception e) {
-
+            LOG.log(Level.INFO, "reason of mismatch:" + e.getMessage());
             return false;
         }
         return true;
     }
 
-    private void setSessionId(HandshakeNegotiatorSession handshakeNegotiatorSession,PreHandshakeContext preHandshakeContext, byte[] sessionId) {
+    private void setSessionId(HandshakeNegotiatorSession handshakeNegotiatorSession, PreHandshakeContext preHandshakeContext, byte[] sessionId) {
         //todo  supported session reuse
 
         SecureRandom secureRandom = preHandshakeContext.getSecureRandom();
 
         GMKaiExtendedSSLSession sslSession = preHandshakeContext.createSSLSession(secureRandom.generateSeed(4),
-                handshakeNegotiatorSession.getTlsCipherSuite(),handshakeNegotiatorSession.getCompressionMethod());
+                handshakeNegotiatorSession.getTlsCipherSuite(), handshakeNegotiatorSession.getCompressionMethod());
         handshakeNegotiatorSession.setSslSession(sslSession);
         handshakeNegotiatorSession.setSessionId(sslSession.getId());
 
