@@ -1,7 +1,6 @@
 package net.gmkai;
 
 import javax.net.ssl.SSLException;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class AlertMsg implements Serializable {
@@ -81,6 +80,7 @@ public class AlertMsg implements Serializable {
         INSUFICIENT_SECURITY(71, "insuficient_security"),
         INTERNAL_ERROR(80, "internal_eror"),
         USER_CANCELED(90, "user_canceled"),
+        NO_RENEGOTIATION(100, "no renegotiation"),
         UNSUPPORTED_SITE2SITE(200, "unsupported_site2site"),
         NO_AREA(201, "no_area"),
         UNSUPPORTED_AREATYPE(202, "unsupported_areatype"),
@@ -110,7 +110,7 @@ public class AlertMsg implements Serializable {
     }
 
 
-    public static AlertMsg getInstance(byte[] fragment) throws IOException {
+    public static AlertMsg getInstance(byte[] fragment) throws SSLException {
         if (fragment.length != 2) throw new SSLException("");
 
         Level level = Level.getInstance(fragment[0]);
