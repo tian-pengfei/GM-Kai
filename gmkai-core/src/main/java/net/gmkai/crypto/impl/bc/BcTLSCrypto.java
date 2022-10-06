@@ -1,6 +1,5 @@
 package net.gmkai.crypto.impl.bc;
 
-import net.gmkai.BCTLSSigner;
 import net.gmkai.crypto.*;
 import net.gmkai.crypto.padding.Padding;
 import net.gmkai.crypto.padding.TLSPadding;
