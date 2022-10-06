@@ -50,12 +50,12 @@ public class CertificateNode extends HandshakeNode {
 
     @Override
     public boolean consumable(HandshakeContext handshakeContext) {
-        return optional.optional(handshakeContext);
+        return consumable.consumable(handshakeContext);
     }
 
     @Override
     public boolean optional(HandshakeContext handshakeContext) {
-        return consumable.consumable(handshakeContext);
+        return optional.optional(handshakeContext);
     }
 
 

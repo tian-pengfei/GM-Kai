@@ -150,7 +150,7 @@ public class DefaultHandshakeContext implements HandshakeContext {
                 .withMacAlg(negotiationResult.cipherSuite.macAlg)
                 .withBulkCipherAlg(negotiationResult.cipherSuite.bulkCipherAlg)
                 .withServerRandom(getServerRandom())
-                .withClientRandom(getServerRandom())
+                .withClientRandom(getClientRandom())
                 .withConnectionEnd(gmKaiSSLParameters.getUseClientMode() ?
                         ConnectionEnd.CLIENT : ConnectionEnd.SERVER)
                 .withRecordIvLength(negotiationResult.cipherSuite.bulkCipherAlg.ivLength)

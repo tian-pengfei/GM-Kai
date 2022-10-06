@@ -11,7 +11,7 @@ import java.security.SecureRandom;
 
 public class InternalContextData {
 
-    // TLCP--> InternalX509KeyManager  TLS-->InternalX509KeyManager
+    // TLCP--> InternalTLCPX509KeyManager  TLS-->InternalX509KeyManager
     private final InternalKeyManager keyManager;
 
     private final InternalX509TrustManager trustManager;

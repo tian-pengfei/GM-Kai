@@ -61,7 +61,7 @@ public class HandshakeExecutor {
 
             HandshakeNode node = handshakeNodes.popHandshakeNode();
             if (node.getHandshakeType() == handshakeMsg.getHandshakeType()) {
-                node.consume(handshakeContext, handshakeMsg.getMsg());
+                node.consume(handshakeContext, handshakeMsg.getBody());
                 return node;
             }
 

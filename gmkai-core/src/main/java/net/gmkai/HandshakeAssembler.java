@@ -11,11 +11,12 @@ public class HandshakeAssembler {
 
     static final ImmutableList<HandshakeNode> tlcp11HandshakeNodes =
             ImmutableList.of(
-                    new CertificateNode(HandshakeContext::isClientMode, HandshakeContext::isClientMode),
+                    new CertificateNode(hc -> !hc.isClientMode(), HandshakeContext::isClientMode),
                     new ServerSimpleKeyExchangeNode(),
 //                    new CertificateRequest(hc->!hc.isNeedAuthClient()),
                     new ServerHelloDoneNode(),
                     new CertificateNode(hc -> !hc.isNeedAuthClient(), hc -> !hc.isClientMode()),
+                    new ClientSimpleKeyExchangeNode(),
 //                    new CertificateVerify(hc->!hc.isNeedAuthClient()),
                     new FinishedNode(hc -> !hc.isClientMode()),
                     new FinishedNode(HandshakeContext::isClientMode));

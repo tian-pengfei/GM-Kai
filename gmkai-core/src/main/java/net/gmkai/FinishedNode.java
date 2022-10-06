@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import static net.gmkai.HandshakeType.FINISHED;
+
 public class FinishedNode extends HandshakeNode {
 
     final static private String CLIENT_FINISHED_LABEL = "client finished";
@@ -66,7 +68,7 @@ public class FinishedNode extends HandshakeNode {
 
     @Override
     public HandshakeType getHandshakeType() {
-        return HandshakeType.FINISHED;
+        return FINISHED;
     }
 
     @Override
@@ -100,7 +102,7 @@ public class FinishedNode extends HandshakeNode {
 
         @Override
         HandshakeType getHandshakeType() {
-            return null;
+            return FINISHED;
         }
 
         @Override

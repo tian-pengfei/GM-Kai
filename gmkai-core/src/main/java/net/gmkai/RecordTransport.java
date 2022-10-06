@@ -40,7 +40,9 @@ class RecordTransport implements
 
     private ProtocolVersion protocolVersion = ProtocolVersion.TLCP11;
 
-    public RecordTransport(TLSEventBus eventBus, TLSCrypto tlsCrypto, InputStream inputStream, OutputStream outputStream) {
+    TLSEventBus tlsEventBus;
+
+    public RecordTransport(TLSEventBus tlsEventBus, TLSCrypto tlsCrypto, InputStream inputStream, OutputStream outputStream) {
 
         this.tlsCrypto = tlsCrypto;
 
@@ -49,8 +51,8 @@ class RecordTransport implements
         this.outputStream = outputStream;
 
         RecordListener recordListener = new RecordListener();
-
-        eventBus.register(recordListener);
+        this.tlsEventBus = tlsEventBus;
+        this.tlsEventBus.register(recordListener);
     }
 
     @Override
@@ -87,7 +89,7 @@ class RecordTransport implements
     }
 
     private void handleUnexpectedMsg(TLSText tlsText) throws SSLException {
-        //触发事件
+        tlsEventBus.postEvent(new ReceivedUnexpectedMsgEvent(tlsText));
     }
 
     private void updateCryptoParameters(TLSCryptoParameters tlsCryptoParameters) {
