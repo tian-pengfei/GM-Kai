@@ -74,6 +74,8 @@ class Handshaker implements RecordUpperLayerProtocol {
         HandshakeExecutor executor = new HandshakeExecutor(transport, handshakeContext);
         executor.execute(handshakeNodes);
 
+        tlsEventBus.postEvent(new HandshakeFinishedEvent());
+
     }
 
     public SSLSession getHandshakeSession() {

@@ -75,9 +75,9 @@ public enum ProtocolVersion {
 
         if (protocolVersions == null) return new String[0];
 
-        return (String[]) protocolVersions.stream()
+        return protocolVersions.stream()
                 .map(protocolVersion -> protocolVersion.name)
-                .toArray();
+                .toArray(String[]::new);
     }
 
     public static Optional<ProtocolVersion> nameOf(String protocolVersion) {
