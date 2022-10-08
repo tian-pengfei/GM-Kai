@@ -1,5 +1,6 @@
 package test;
 
+import com.aliyun.gmsse.GMProvider;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
@@ -13,9 +14,14 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.interfaces.ECPrivateKey;
@@ -117,6 +123,29 @@ public class TestHelper {
             return (BCECPrivateKey) ecPrivateKey;
         }
         return new BCECPrivateKey(ecPrivateKey, BouncyCastleProvider.CONFIGURATION);
+    }
+
+    public static void sendAsyncConnectTLCPServer(String url) {
+
+        new Thread(() -> {
+            try {
+                GMProvider provider = new GMProvider();
+                SSLContext sc = SSLContext.getInstance("TLS", provider);
+                sc.init(null, new TrustManager[]{new TrustAllManager()}, null);
+                SSLSocketFactory ssf = sc.getSocketFactory();
+
+                URL serverUrl = new URL(url);
+                HttpsURLConnection conn = (HttpsURLConnection) serverUrl.openConnection();
+                conn.setRequestMethod("GET");
+                // set SSLSocketFactory
+                conn.setSSLSocketFactory(ssf);
+                conn.connect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+
     }
 
     public static void main(String[] args) {

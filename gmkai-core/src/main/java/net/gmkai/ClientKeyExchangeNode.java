@@ -12,12 +12,14 @@ public abstract class ClientKeyExchangeNode extends HandshakeNode {
 
     @Override
     public final boolean consumable(HandshakeContext handshakeContext) {
-        return false;
+        return !handshakeContext.isClientMode();
     }
 
     @Override
     public void doAfterConsume(HandshakeContext handshakeContext) throws SSLException {
         generateMasterSecret(handshakeContext);
+        handshakeContext.generateSecurityParameters();
+
     }
 
     @Override
@@ -28,6 +30,7 @@ public abstract class ClientKeyExchangeNode extends HandshakeNode {
     @Override
     public void doAfterProduce(HandshakeContext handshakeContext) throws SSLException {
         generateMasterSecret(handshakeContext);
+        handshakeContext.generateSecurityParameters();
     }
 
     private void generateMasterSecret(HandshakeContext handshakeContext) throws SSLException {
@@ -38,6 +41,7 @@ public abstract class ClientKeyExchangeNode extends HandshakeNode {
         byte[] preMasterSecret = handshakeContext.getPreMasterSecret();
         handshakeContext.setMasterSecret(
                 tlsPrf.prf(preMasterSecret, "master secret", seed, preMasterSecret.length));
+
     }
 
     @Override

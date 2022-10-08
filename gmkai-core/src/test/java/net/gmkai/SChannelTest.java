@@ -6,13 +6,13 @@ import net.gmkai.event.GMKaiEventBus;
 import net.gmkai.event.TLSEventBus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test.TestHelper;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.Principal;
-import java.security.PrivateKey;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -30,7 +30,7 @@ public class SChannelTest {
     GMKaiSSLParameters gmKaiSSLParameters;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
 
         tlsEventBus = new GMKaiEventBus();
 
@@ -75,7 +75,42 @@ public class SChannelTest {
                 is(ECC_SM4_CBC_SM3.name));
     }
 
-    private static InternalContextData createTextInternalContextData() {
+    @Test
+    public void should_tlcp11_server_handshake_with_ecc_sm4_cbc_sm3() throws IOException {
+
+        String url = "https://localhost:5443";
+        TestHelper.sendAsyncConnectTLCPServer(url);
+        int port = 5443;
+
+
+        ServerSocket serverSocket = new ServerSocket(port);
+
+        Socket socket = serverSocket.accept();
+
+        PeerInfoProvider peerInfoProvider = new PeerInfoProvider() {
+            @Override
+            public String getHostname() {
+                return socket.getInetAddress().getHostName();
+            }
+
+            @Override
+            public int getPort() {
+                return socket.getPort();
+            }
+        };
+
+        gmKaiSSLParameters.setUseClientMode(false);
+        SChannel sChannel = new SChannel(
+                tlsEventBus,
+                internalContextData,
+                gmKaiSSLParameters, peerInfoProvider, socket.getInputStream(), socket.getOutputStream());
+
+        sChannel.startHandshake();
+        assertThat(sChannel.getHandshakeSession().getCipherSuite(),
+                is(ECC_SM4_CBC_SM3.name));
+    }
+
+    private static InternalContextData createTextInternalContextData() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
 
         InternalContextData internalContextData = mock(InternalContextData.class);
         when(internalContextData.getSecureRandom()).thenReturn(new SecureRandom());
@@ -106,6 +141,10 @@ public class SChannelTest {
 
     private static class MyInternalTLCPX509KeyManager implements InternalTLCPX509KeyManager {
 
+        KeyStore sm2KeyStore = TestHelper.getKeyStore("src/test/resources/sm2.gmkai.pfx", "12345678");
+
+        private MyInternalTLCPX509KeyManager() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
+        }
 
         @Override
         public String[] getClientAliases(String keyType, Principal[] issuers) {
@@ -119,32 +158,40 @@ public class SChannelTest {
 
         @Override
         public PrivateKey getPrivateKey(String alias) {
-            return null;
+            try {
+                return (PrivateKey) sm2KeyStore.getKey(alias, "12345678".toCharArray());
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
         }
 
         @Override
         public String chooseClientSigAlias(String[] keyType, Principal[] issuers) {
-            return null;
+            return "sig";
         }
 
         @Override
         public String chooseClientEncAlias(String[] keyType, Principal[] issuers) {
-            return null;
+            return "enc";
         }
 
         @Override
         public String chooseServerSigAlias(String keyType, Principal[] issuers) {
-            return null;
+            return "sig";
         }
 
         @Override
         public String chooseServerEncAlias(String keyType, Principal[] issuers) {
-            return null;
+            return "enc";
         }
 
         @Override
         public X509Certificate[] getCertificateChain(String sigAlias, String encAlias) {
-            return new X509Certificate[0];
+            try {
+                return new X509Certificate[]{(X509Certificate) sm2KeyStore.getCertificate(sigAlias), (X509Certificate) sm2KeyStore.getCertificate(encAlias)};
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
         }
     }
 

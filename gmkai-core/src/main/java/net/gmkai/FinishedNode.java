@@ -52,7 +52,6 @@ public class FinishedNode extends HandshakeNode {
 
     @Override
     protected HandshakeMsg doProduce(HandshakeContext handshakeContext) throws IOException {
-        handshakeContext.generateSecurityParameters();
         handshakeContext.changeWriteCipherSpec();
 
         FinishedMsg finishedMsg = new FinishedMsg();

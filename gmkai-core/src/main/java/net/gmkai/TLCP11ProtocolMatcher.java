@@ -70,14 +70,13 @@ public class TLCP11ProtocolMatcher implements ProtocolMatcher {
 
             CompressionMethod compressionMethod = chooseCompressionMethod(clientHelloMsg.compressionMethods);
 
-            setSessionId(handshakeNegotiatorSession, preHandshakeContext, clientHelloMsg.sessionId);
 
             handshakeNegotiatorSession.setProtocolVersion(clientHelloMsg.version);
             handshakeNegotiatorSession.setClientRandom(clientHelloMsg.random);
             handshakeNegotiatorSession.setTlsCipherSuite(tlsCipherSuite);
             handshakeNegotiatorSession.setCompressionMethod(compressionMethod);
             handshakeNegotiatorSession.setProtocolVersion(ProtocolVersion.TLCP11);
-
+            setSessionId(handshakeNegotiatorSession, preHandshakeContext, clientHelloMsg.sessionId);
 
         } catch (Exception e) {
             LOG.log(Level.INFO, "reason of mismatch:" + e.getMessage());

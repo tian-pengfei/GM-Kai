@@ -8,7 +8,9 @@ public abstract class HandshakeNode implements HandshakeProducer, HandshakeConsu
 
     @Override
     final public void consume(HandshakeContext handshakeContext, byte[] message) throws IOException {
-        if (optional(handshakeContext) || !consumable(handshakeContext)) throw new SSLException("");
+        if (optional(handshakeContext) || !consumable(handshakeContext)) {
+            throw new SSLException("");
+        }
         doConsume(handshakeContext, message);
     }
 

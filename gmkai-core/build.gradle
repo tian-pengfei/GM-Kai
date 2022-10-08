@@ -41,6 +41,7 @@ dependencies {
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
             "org.hamcrest:hamcrest-library:$hamcrestVersion",
             "org.mockito:mockito-core:$mockitoVersion",
+            "com.aliyun:gmsse:1.1.0",
             fileTree(dir:'lib',includes:['gmhelper.jar'])
     )
 
