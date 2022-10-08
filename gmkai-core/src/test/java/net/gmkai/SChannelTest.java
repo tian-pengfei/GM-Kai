@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.*;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import static net.gmkai.TLSCipherSuite.ECC_SM4_CBC_SM3;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -116,84 +118,8 @@ public class SChannelTest {
         when(internalContextData.getSecureRandom()).thenReturn(new SecureRandom());
         when(internalContextData.getTLSCrypto()).thenReturn(new BcTLSCrypto());
         when(internalContextData.getKeyManager()).thenReturn(new MyInternalTLCPX509KeyManager());
-        when(internalContextData.getTrustManager()).thenReturn(new TrustAllManager());
+        when(internalContextData.getTrustManager()).thenReturn(new MyInternalTrustAllManager());
         return internalContextData;
     }
-
-    private static class TrustAllManager implements InternalX509TrustManager {
-
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-
-        }
-
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-
-        }
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-
-    private static class MyInternalTLCPX509KeyManager implements InternalTLCPX509KeyManager {
-
-        KeyStore sm2KeyStore = TestHelper.getKeyStore("src/test/resources/sm2.gmkai.pfx", "12345678");
-
-        private MyInternalTLCPX509KeyManager() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
-        }
-
-        @Override
-        public String[] getClientAliases(String keyType, Principal[] issuers) {
-            return new String[0];
-        }
-
-        @Override
-        public String[] getServerAliases(String keyType, Principal[] issuers) {
-            return new String[0];
-        }
-
-        @Override
-        public PrivateKey getPrivateKey(String alias) {
-            try {
-                return (PrivateKey) sm2KeyStore.getKey(alias, "12345678".toCharArray());
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-        }
-
-        @Override
-        public String chooseClientSigAlias(String[] keyType, Principal[] issuers) {
-            return "sig";
-        }
-
-        @Override
-        public String chooseClientEncAlias(String[] keyType, Principal[] issuers) {
-            return "enc";
-        }
-
-        @Override
-        public String chooseServerSigAlias(String keyType, Principal[] issuers) {
-            return "sig";
-        }
-
-        @Override
-        public String chooseServerEncAlias(String keyType, Principal[] issuers) {
-            return "enc";
-        }
-
-        @Override
-        public X509Certificate[] getCertificateChain(String sigAlias, String encAlias) {
-            try {
-                return new X509Certificate[]{(X509Certificate) sm2KeyStore.getCertificate(sigAlias), (X509Certificate) sm2KeyStore.getCertificate(encAlias)};
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-        }
-    }
-
 
 }
