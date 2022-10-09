@@ -44,8 +44,6 @@ public class GMKaiSocket extends AbstractGMKaiSocket {
         this.gmKaiSSLParameters = gmKaiSSLParameters.clone();
 
         internalContextData = InternalContextData.getInstance(contextData, this);
-
-        notifyConnected();
     }
 
     GMKaiSocket(String hostname, int port, ContextData contextData, GMKaiSSLParameters gmKaiSSLParameters) throws IOException {
@@ -244,10 +242,8 @@ public class GMKaiSocket extends AbstractGMKaiSocket {
 
         @Override
         public void handshakeFinished(HandshakeFinishedEvent event) {
-            handshakeCompletedListeners.forEach(listener -> {
-                listener.handshakeCompleted(
-                        new HandshakeCompletedEvent(GMKaiSocket.this, getSession()));
-            });
+            handshakeCompletedListeners.forEach(listener -> listener.handshakeCompleted(
+                    new HandshakeCompletedEvent(GMKaiSocket.this, getSession())));
         }
     }
 }
