@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -146,6 +148,15 @@ public class TestHelper {
         }).start();
 
 
+    }
+
+    public static X509Certificate getX509CertificateFromPEM(String certPath) throws IOException, CertificateException, NoSuchProviderException {
+
+        CertificateFactory cf = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
+
+        FileInputStream is = new FileInputStream(certPath);
+
+        return (X509Certificate) cf.generateCertificate(is);
     }
 
     public static void main(String[] args) {
