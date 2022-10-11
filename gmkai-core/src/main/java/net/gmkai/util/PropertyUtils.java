@@ -16,11 +16,11 @@ import java.util.logging.Logger;
 public class PropertyUtils {
     private static final Logger LOG = Logger.getLogger(PropertyUtils.class.getName());
 
-    static String getSecurityProperty(final String propertyName) {
+    public static String getSecurityProperty(final String propertyName) {
         return AccessController.doPrivileged((PrivilegedAction<String>) () -> Security.getProperty(propertyName));
     }
 
-    static String getSystemProperty(final String propertyName) {
+    public static String getSystemProperty(final String propertyName) {
         try {
             return AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty(propertyName));
         } catch (RuntimeException e) {
@@ -29,7 +29,7 @@ public class PropertyUtils {
         }
     }
 
-    static boolean getBooleanSecurityProperty(String propertyName, boolean defaultValue) {
+    public static boolean getBooleanSecurityProperty(String propertyName, boolean defaultValue) {
         String propertyValue = getSecurityProperty(propertyName);
         if (null != propertyValue) {
             if ("true".equalsIgnoreCase(propertyValue)) {
@@ -46,7 +46,7 @@ public class PropertyUtils {
         return defaultValue;
     }
 
-    static boolean getBooleanSystemProperty(String propertyName, boolean defaultValue) {
+    public static boolean getBooleanSystemProperty(String propertyName, boolean defaultValue) {
         String propertyValue = getSystemProperty(propertyName);
         if (null != propertyValue) {
             if ("true".equalsIgnoreCase(propertyValue)) {
@@ -63,7 +63,7 @@ public class PropertyUtils {
         return defaultValue;
     }
 
-    static int getIntegerSystemProperty(String propertyName, int defaultValue, int minimumValue, int maximumValue) {
+    public static int getIntegerSystemProperty(String propertyName, int defaultValue, int minimumValue, int maximumValue) {
         String propertyValue = getSystemProperty(propertyName);
         if (null != propertyValue) {
             try {
@@ -84,7 +84,7 @@ public class PropertyUtils {
         return defaultValue;
     }
 
-    static String getSensitiveStringSystemProperty(String propertyName) {
+    public static String getSensitiveStringSystemProperty(String propertyName) {
         String propertyValue = getSystemProperty(propertyName);
         if (null != propertyValue) {
             LOG.info("Found sensitive string system property [" + propertyName + "]");
@@ -93,7 +93,7 @@ public class PropertyUtils {
         return null;
     }
 
-    static String getStringSecurityProperty(String propertyName) {
+    public static String getStringSecurityProperty(String propertyName) {
         String propertyValue = getSecurityProperty(propertyName);
         if (null != propertyValue) {
             LOG.log(Level.INFO, "Found string security property [" + propertyName + "]: " + propertyValue);
@@ -102,7 +102,7 @@ public class PropertyUtils {
         return null;
     }
 
-    static String getStringSecurityProperty(String propertyName, String defaultValue) {
+    public static String getStringSecurityProperty(String propertyName, String defaultValue) {
         String propertyValue = getSecurityProperty(propertyName);
         if (null != propertyValue) {
             LOG.log(Level.INFO, "Found string security property [" + propertyName + "]: " + propertyValue);
@@ -112,7 +112,7 @@ public class PropertyUtils {
         return defaultValue;
     }
 
-    static String getStringSystemProperty(String propertyName) {
+    public static String getStringSystemProperty(String propertyName) {
         String propertyValue = getSystemProperty(propertyName);
         if (null != propertyValue) {
             LOG.log(Level.INFO, "Found string system property [" + propertyName + "]: " + propertyValue);
@@ -121,13 +121,13 @@ public class PropertyUtils {
         return null;
     }
 
-    static String[] getStringArraySecurityProperty(String propertyName, String defaultValue) {
+    public static String[] getStringArraySecurityProperty(String propertyName, String defaultValue) {
         String propertyValue = getStringSecurityProperty(propertyName, defaultValue);
 
         return parseStringArray(propertyValue);
     }
 
-    static String[] getStringArraySystemProperty(String propertyName) {
+    public static String[] getStringArraySystemProperty(String propertyName) {
         String propertyValue = getStringSystemProperty(propertyName);
 
         return parseStringArray(propertyValue);
