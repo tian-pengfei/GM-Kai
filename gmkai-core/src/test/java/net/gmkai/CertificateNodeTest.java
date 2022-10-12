@@ -46,7 +46,6 @@ public class CertificateNodeTest {
 
         HandshakeMsg handshakeMsg = certificateNode.doProduce(handshakeContext);
 
-        verify(handshakeContext).setLocalCertChain(chain);
         assertThat(handshakeMsg.getBody(), is(certificateMessage));
     }
 

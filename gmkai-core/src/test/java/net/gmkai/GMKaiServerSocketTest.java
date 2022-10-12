@@ -45,17 +45,17 @@ public class GMKaiServerSocketTest {
     @Test
     public void should_create() throws IOException {
         new GMKaiServerSocket(contextData, gmKaiSSLParameters);
-        new GMKaiServerSocket(25545, 3, contextData, gmKaiSSLParameters);
-        new GMKaiServerSocket(25546, 1, InetAddress.getLocalHost(), contextData, gmKaiSSLParameters);
+        new GMKaiServerSocket(25555, 3, contextData, gmKaiSSLParameters);
+        new GMKaiServerSocket(25556, 1, InetAddress.getLocalHost(), contextData, gmKaiSSLParameters);
     }
 
     @Test
     public void should_accept() throws IOException {
 
-        GMKaiServerSocket serverSocket = new GMKaiServerSocket(25545, 3, contextData, gmKaiSSLParameters);
+        GMKaiServerSocket serverSocket = new GMKaiServerSocket(25565, 3, contextData, gmKaiSSLParameters);
         new Thread(() -> {
             try {
-                new Socket("localhost", 25545);
+                new Socket("localhost", 25565);
             } catch (IOException e) {
                 e.printStackTrace();
             }

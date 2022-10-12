@@ -22,11 +22,11 @@ public class ClientSimpleKeyExchangeNodeTest {
 
     private X509Certificate[] sm2Chain;
 
-    private PrivateKey sm2EncKey;
-
     private X509Certificate[] rsaChain;
 
-    private PrivateKey rsaEncKey;
+    private TLCPX509Possession sm2Possession;
+
+    private TLCPX509Possession rsaPossession;
 
     byte[] sm2_client_key_exchange_msg = Hexs.decode("00 9b 30 81 98 02 20 a9 76 a3 24 e1\n" +
             "   51 75 ef 89 a7 61 7e 61 a3 86 29 40 6a 65 93 da\n" +
@@ -48,11 +48,16 @@ public class ClientSimpleKeyExchangeNodeTest {
         KeyStore sm2KeyStore = TestHelper.getKeyStore("src/test/resources/sm2.gmkai.pfx", "12345678");
 
         this.sm2Chain = new X509Certificate[]{(X509Certificate) sm2KeyStore.getCertificate("sig"), (X509Certificate) sm2KeyStore.getCertificate("enc")};
-        this.sm2EncKey = (PrivateKey) sm2KeyStore.getKey("enc", "12345678".toCharArray());
+
+        PrivateKey sm2EncKey = (PrivateKey) sm2KeyStore.getKey("enc", "12345678".toCharArray());
+
+        PrivateKey sm2SigKey = (PrivateKey) sm2KeyStore.getKey("sin", "12345678".toCharArray());
+        this.sm2Possession = new TLCPX509Possession(sm2Chain, sm2SigKey, sm2EncKey);
 
         KeyStore rsaKeyStore = TestHelper.getKeyStore("src/test/resources/rsa.gmkai.pfx", "12345678");
         this.rsaChain = new X509Certificate[]{(X509Certificate) rsaKeyStore.getCertificate("keypair"), (X509Certificate) rsaKeyStore.getCertificate("keypair")};
-        this.rsaEncKey = (PrivateKey) rsaKeyStore.getKey("keypair", "12345678".toCharArray());
+        PrivateKey rsaKey = (PrivateKey) rsaKeyStore.getKey("keypair", "12345678".toCharArray());
+        this.rsaPossession = new TLCPX509Possession(rsaChain, rsaKey, rsaKey);
 
         when(handshakeContext.getTLSCrypto()).thenReturn(new BcTLSCrypto());
         when(handshakeContext.getCurrentProtocol()).thenReturn(ProtocolVersion.TLCP11);
@@ -67,7 +72,7 @@ public class ClientSimpleKeyExchangeNodeTest {
 
     @Test
     public void should_consume_client_ecc_key_change_message() throws IOException {
-        should_consume_client_key_change_message(TLSCipherSuite.ECC_SM4_CBC_SM3, sm2EncKey, sm2_client_key_exchange_msg);
+        should_consume_client_key_change_message(TLSCipherSuite.ECC_SM4_CBC_SM3, sm2Possession, sm2_client_key_exchange_msg);
     }
 
     @Test
@@ -80,7 +85,7 @@ public class ClientSimpleKeyExchangeNodeTest {
     public void should_consume_client_rsa_key_change_message() throws IOException {
         byte[] message = Hexs.decode("01009f36729afe04774b111e4a977dc3aa01f6d5fce554b113b6b08387e5dd17cc0fb63fbd5ce4c40ebe8c9b673aad7f7807e5a5f96c473dc6d5546e72c7de1b493969d4e1eb0885effb31bc5950be0c17c44519412ef8453d9db8ea61194cc543382cf5d98dda647f1430db292eafca8add2eb6f4414765c0b370cedbb50d6ac358a7d9924239f3edf22e4025ac12b0a32577d5cd1d5cdfdc63e6e65e19c616e0310e8381c1785c192a6da18b31d22e499246c62e69352ac8e1dc36095d9d9d3752893bdb9441d0e60e0b6dc92da376ca86f3264d31c181fc4d7a29df7d35d7a1ce9f64ba34d89e2e6364cf80e171748fbc037c82ac53635793613456a85aa81282");
 
-        should_consume_client_key_change_message(TLSCipherSuite.RSA_SM4_CBC_SHA256, rsaEncKey, message);
+        should_consume_client_key_change_message(TLSCipherSuite.RSA_SM4_CBC_SHA256, rsaPossession, message);
     }
 
     private void should_product_client_key_change_message(TLSCipherSuite tlsCipherSuite, X509Certificate[] chain) throws IOException {
@@ -94,14 +99,13 @@ public class ClientSimpleKeyExchangeNodeTest {
     }
 
 
-    public void should_consume_client_key_change_message(TLSCipherSuite tlsCipherSuite, PrivateKey privateKey, byte[] message) throws IOException {
+    public void should_consume_client_key_change_message(TLSCipherSuite tlsCipherSuite, TLCPX509Possession possession, byte[] message) throws IOException {
 
         ClientSimpleKeyExchangeNode clientSimpleKeyExchangeNode = new ClientSimpleKeyExchangeNode();
         when(handshakeContext.getCurrentCipherSuite()).thenReturn(tlsCipherSuite);
         when(handshakeContext.isClientMode()).thenReturn(false);
-        InternalTLCPX509KeyManager internalTLCPX509KeyManager = mock(InternalTLCPX509KeyManager.class);
-        when(internalTLCPX509KeyManager.getPrivateKey(any())).thenReturn(privateKey);
-        when(handshakeContext.getKeyManager()).thenReturn(internalTLCPX509KeyManager);
+
+        when(handshakeContext.getTLCPX509Possession()).thenReturn(possession);
 
         clientSimpleKeyExchangeNode.doConsume(handshakeContext, message);
 

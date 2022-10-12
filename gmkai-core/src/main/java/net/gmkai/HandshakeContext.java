@@ -16,7 +16,9 @@ public interface HandshakeContext {
 
     void setPeerCertChain(X509Certificate[] chain);
 
-    void setLocalCertChain(X509Certificate[] chain);
+    void setTLCPX509Possession(TLCPX509Possession possession);
+
+    TLCPX509Possession getTLCPX509Possession();
 
     X509Certificate[] getPeerCertChain() throws SSLException;
 

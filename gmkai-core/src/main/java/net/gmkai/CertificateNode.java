@@ -35,11 +35,11 @@ public class CertificateNode extends HandshakeNode {
     @Override
     protected HandshakeMsg doProduce(HandshakeContext handshakeContext) throws SSLException {
 
-        X509Certificate[] certs = getCertChain(handshakeContext);
+        TLCPX509Possession possession = getPossession(handshakeContext);
 
-        handshakeContext.setLocalCertChain(certs);
+        handshakeContext.setTLCPX509Possession(possession);
 
-        return new CertificateMsg(certs);
+        return new CertificateMsg(possession.getChain());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CertificateNode extends HandshakeNode {
         }
     }
 
-    private X509Certificate[] getCertChain(HandshakeContext handshakeContext) throws SSLException {
+    private TLCPX509Possession getPossession(HandshakeContext handshakeContext) throws SSLException {
 
         KeyManager x509KeyManager = handshakeContext.getKeyManager();
 
@@ -85,13 +85,16 @@ public class CertificateNode extends HandshakeNode {
             InternalTLCPX509KeyManager tlcpx509KeyManager = (InternalTLCPX509KeyManager) x509KeyManager;
             TLSCipherSuite tlsCipherSuite = handshakeContext.getCurrentCipherSuite();
 
-            String sig = tlcpx509KeyManager.chooseServerSigAlias(tlsCipherSuite.name, null);
-            String enc = tlcpx509KeyManager.chooseServerEncAlias(tlsCipherSuite.name, null);
+            String keyType = tlsCipherSuite.keyExchangeAlg.keyType;
 
-            return tlcpx509KeyManager.getCertificateChain(sig, enc);
+            String sig = tlcpx509KeyManager.chooseServerSigAlias(keyType, null);
+            String enc = tlcpx509KeyManager.chooseServerEncAlias(keyType, null);
+
+
+            return new TLCPX509Possession(tlcpx509KeyManager.getCertificateChain(sig, enc), tlcpx509KeyManager.getPrivateKey(sig), tlcpx509KeyManager.getPrivateKey(enc));
         }
 
-        throw new SSLException("fail to get chain");
+        throw new SSLException("fail to get possession");
     }
 
 

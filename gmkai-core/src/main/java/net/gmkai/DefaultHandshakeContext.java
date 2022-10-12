@@ -7,6 +7,7 @@ import net.gmkai.event.*;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLException;
 import java.security.cert.X509Certificate;
+import java.util.Objects;
 
 
 public class DefaultHandshakeContext implements HandshakeContext {
@@ -24,6 +25,8 @@ public class DefaultHandshakeContext implements HandshakeContext {
     private final TransportHasher transportHasher;
 
     private final TLSEventBus tlsEventBus;
+
+    private TLCPX509Possession possession;
 
     public DefaultHandshakeContext(NegotiationResult negotiationResult,
                                    InternalContextData internalContextData,
@@ -67,8 +70,17 @@ public class DefaultHandshakeContext implements HandshakeContext {
     }
 
     @Override
-    public void setLocalCertChain(X509Certificate[] chain) {
-        sslSession.putLocalCertificate(chain);
+    public void setTLCPX509Possession(TLCPX509Possession possession) {
+        this.possession = possession;
+        sslSession.putLocalCertificate(possession.getChain());
+    }
+
+    @Override
+    public TLCPX509Possession getTLCPX509Possession() {
+        if (Objects.isNull(possession)) {
+            throw new IllegalStateException("possession have not been initialized");
+        }
+        return possession;
     }
 
     @Override

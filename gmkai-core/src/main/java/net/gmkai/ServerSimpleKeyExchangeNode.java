@@ -48,19 +48,14 @@ public class ServerSimpleKeyExchangeNode extends ServerKeyExchangeNode {
 
     private TLSSigner getTLSSigner(HandshakeContext handshakeContext) {
 
-        KeyManager keyManager = handshakeContext.getKeyManager();
         TLSCrypto tlsCrypto = handshakeContext.getTLSCrypto();
         SignatureAndHashAlg signatureAndHashAlg = handshakeContext.getCurrentCipherSuite().keyExchangeAlg.signatureAndHashAlg;
 
-        if (!(keyManager instanceof InternalTLCPX509KeyManager)) {
-            throw new RuntimeException();
-        }
 
-        InternalTLCPX509KeyManager internalTLCPX509KeyManager = (InternalTLCPX509KeyManager) keyManager;
-        String sigAlias = internalTLCPX509KeyManager.chooseServerSigAlias(signatureAndHashAlg.signAlg.name(), null);
+        TLCPX509Possession possession = handshakeContext.getTLCPX509Possession();
 
         return tlsCrypto.
-                getTLSSigner(internalTLCPX509KeyManager.getPrivateKey(sigAlias), signatureAndHashAlg);
+                getTLSSigner(possession.getSigPriKey(), signatureAndHashAlg);
     }
 
     private TLSSignatureVerifier getTLSSignatureVerifier(HandshakeContext handshakeContext) throws SSLException {

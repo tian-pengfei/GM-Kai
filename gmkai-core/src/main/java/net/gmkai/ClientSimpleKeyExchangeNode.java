@@ -89,16 +89,9 @@ public class ClientSimpleKeyExchangeNode extends ClientKeyExchangeNode {
         }
 
         KeyManager keyManager = handshakeContext.getKeyManager();
-        TLSCipherSuite tlsCipherSuite = handshakeContext.getCurrentCipherSuite();
-        String keyType = tlsCipherSuite.keyExchangeAlg == KeyExchangeAlg.K_ECC ? "ecc" : "rsa";
+        TLCPX509Possession possession = handshakeContext.getTLCPX509Possession();
 
-        if (keyManager instanceof InternalTLCPX509KeyManager) {
-            InternalTLCPX509KeyManager internalTLCPX509KeyManager = (InternalTLCPX509KeyManager) keyManager;
-            String alias = internalTLCPX509KeyManager.chooseServerEncAlias(keyType, null);
-            return internalTLCPX509KeyManager.getPrivateKey(alias);
-        }
-
-        throw new SSLException("");
+        return possession.getEncPriKey();
     }
 
     static class ClientSimpleKeyExchangeMsg extends HandshakeMsg {

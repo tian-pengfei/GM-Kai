@@ -7,6 +7,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Objects;
+
 //simple implementation
 //todo complete
 public class GMKaiTLCPX509TrustManager extends X509ExtendedTrustManager {

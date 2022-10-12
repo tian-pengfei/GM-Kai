@@ -27,6 +27,10 @@ public class ServerSimpleKeyExchangeNodeTest {
 
     private PrivateKey rsaSignKey;
 
+    private TLCPX509Possession sm2Possession;
+
+    private TLCPX509Possession rsaPossession;
+
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -36,12 +40,14 @@ public class ServerSimpleKeyExchangeNodeTest {
         KeyStore sm2KeyStore = TestHelper.getKeyStore("src/test/resources/sm2.gmkai.pfx", "12345678");
 
         this.sm2Chain = new X509Certificate[]{(X509Certificate) sm2KeyStore.getCertificate("sig"), (X509Certificate) sm2KeyStore.getCertificate("enc")};
-        this.sm2SignKey = (PrivateKey) sm2KeyStore.getKey("sig", "12345678".toCharArray());
+        PrivateKey sm2SignKey = (PrivateKey) sm2KeyStore.getKey("sig", "12345678".toCharArray());
+        PrivateKey sm2EncKey = (PrivateKey) sm2KeyStore.getKey("enc", "12345678".toCharArray());
+        this.sm2Possession = new TLCPX509Possession(sm2Chain, sm2SignKey, sm2EncKey);
 
         KeyStore rsaKeyStore = TestHelper.getKeyStore("src/test/resources/rsa.gmkai.pfx", "12345678");
         this.rsaChain = new X509Certificate[]{(X509Certificate) rsaKeyStore.getCertificate("keypair"), (X509Certificate) rsaKeyStore.getCertificate("keypair")};
-        this.rsaSignKey = (PrivateKey) rsaKeyStore.getKey("keypair", "12345678".toCharArray());
-
+        PrivateKey rsaKey = (PrivateKey) rsaKeyStore.getKey("keypair", "12345678".toCharArray());
+        this.rsaPossession = new TLCPX509Possession(rsaChain, rsaKey, rsaKey);
 
         when(handshakeContext.getServerRandom()).thenReturn(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         when(handshakeContext.getClientRandom()).thenReturn(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
@@ -50,7 +56,7 @@ public class ServerSimpleKeyExchangeNodeTest {
 
     @Test
     public void should_server_product_ecc_key_change_message() throws IOException {
-        should_server_product_simple_key_change_message(sm2SignKey, TLSCipherSuite.ECC_SM4_CBC_SM3, sm2Chain);
+        should_server_product_simple_key_change_message(sm2Possession, TLSCipherSuite.ECC_SM4_CBC_SM3, sm2Chain);
     }
 
     @Test
@@ -64,7 +70,7 @@ public class ServerSimpleKeyExchangeNodeTest {
     @Test
     public void should_server_product_rsa_key_change_message() throws IOException {
 
-        should_server_product_simple_key_change_message(rsaSignKey, TLSCipherSuite.RSA_SM4_CBC_SHA256, rsaChain);
+        should_server_product_simple_key_change_message(rsaPossession, TLSCipherSuite.RSA_SM4_CBC_SHA256, rsaChain);
     }
 
     @Test
@@ -87,13 +93,11 @@ public class ServerSimpleKeyExchangeNodeTest {
     }
 
 
-    public void should_server_product_simple_key_change_message(PrivateKey privateKey, TLSCipherSuite tlsCipherSuite, X509Certificate[] chain) throws IOException {
+    public void should_server_product_simple_key_change_message(TLCPX509Possession possession, TLSCipherSuite tlsCipherSuite, X509Certificate[] chain) throws IOException {
 
         ServerSimpleKeyExchangeNode serverECCKeyExchangeNode = new ServerSimpleKeyExchangeNode();
 
-        InternalTLCPX509KeyManager internalTLCPX509KeyManager = mock(InternalTLCPX509KeyManager.class);
-        when(internalTLCPX509KeyManager.getPrivateKey(any())).thenReturn(privateKey);
-        when(handshakeContext.getKeyManager()).thenReturn(internalTLCPX509KeyManager);
+        when(handshakeContext.getTLCPX509Possession()).thenReturn(possession);
         when(handshakeContext.getCurrentCipherSuite()).thenReturn(tlsCipherSuite);
         when(handshakeContext.isClientMode()).thenReturn(false);
         when(handshakeContext.getLocalCertChain()).thenReturn(chain);
