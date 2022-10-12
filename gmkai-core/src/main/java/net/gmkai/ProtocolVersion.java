@@ -88,8 +88,10 @@ public enum ProtocolVersion {
 
     public static List<ProtocolVersion> namesOf(String[] protocolVersions) {
 
-        return Arrays.stream(protocolVersions)
-                .map(ProtocolVersion::valueOf)
-                .collect(Collectors.toList());
+        return Arrays.stream(protocolVersions).
+                map(ProtocolVersion::nameOf).
+                filter(Optional::isPresent).
+                map(Optional::get).
+                collect(Collectors.toList());
     }
 }
