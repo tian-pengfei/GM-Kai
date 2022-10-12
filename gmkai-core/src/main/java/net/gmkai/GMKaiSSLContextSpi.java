@@ -75,7 +75,9 @@ public class GMKaiSSLContextSpi extends SSLContextSpi {
 
         KeyManager keyManager = chooseKeyManager(km);
         X509ExtendedTrustManager trustManager = chooseTrustManager(tm);
-
+        if (Objects.isNull(sr)) {
+            sr = new SecureRandom();
+        }
         contextData = new ContextData(
                 serverSessionContext,
                 clientSessionContext,
@@ -126,11 +128,11 @@ public class GMKaiSSLContextSpi extends SSLContextSpi {
 
 
     private KeyManager chooseKeyManager(KeyManager[] km) {
-        if (Objects.isNull(km)) return null;
+        if (Objects.isNull(km)) return new DummyTLCPX509KeyManager();
 
         return Arrays.stream(km).
                 filter(k -> k instanceof TLCPX509KeyManager).
-                findFirst().orElse(null);
+                findFirst().orElse(new DummyTLCPX509KeyManager());
     }
 
     private X509ExtendedTrustManager chooseTrustManager(TrustManager[] tm) throws KeyManagementException {
