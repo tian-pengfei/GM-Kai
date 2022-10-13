@@ -14,14 +14,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.net.ssl.*;
+import java.io.*;
+import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -30,6 +27,8 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TestHelper {
 
@@ -146,20 +145,121 @@ public class TestHelper {
                 e.printStackTrace();
             }
         }).start();
-
-
     }
 
-    public static X509Certificate getX509CertificateFromPEM(String certPath) throws IOException, CertificateException, NoSuchProviderException {
+    public static X509Certificate getX509CertificateFromPEM(String certPath) throws CertificateException, NoSuchProviderException, IOException {
 
         CertificateFactory cf = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
 
-        FileInputStream is = new FileInputStream(certPath);
-
-        return (X509Certificate) cf.generateCertificate(is);
+        try (FileInputStream is = new FileInputStream(certPath)) {
+            return (X509Certificate) cf.generateCertificate(is);
+        }
     }
 
-    public static void main(String[] args) {
+    public static List<X509Certificate> getX509CertificatesFromPEM(String certPath) throws CertificateException, NoSuchProviderException, IOException {
 
+        CertificateFactory cf = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
+
+        try (FileInputStream is = new FileInputStream(certPath)) {
+            return cf.generateCertificates(is).stream().
+                    map(certificate -> (X509Certificate) certificate).
+                    collect(Collectors.toList());
+        }
     }
+
+    public static String sendHttpGetRequest(SSLSocketFactory sslSocketFactory, String url) throws IOException {
+
+        URL serverUrl = new URL(url);
+
+        HttpsURLConnection conn = (HttpsURLConnection) serverUrl.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setSSLSocketFactory(sslSocketFactory);
+        conn.connect();
+        return readFromStream(conn.getInputStream());
+    }
+
+    public static String sendHttpGetRequestByTLCP1_1(String url) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+
+        GMProvider provider = new GMProvider();
+        SSLContext sc = SSLContext.getInstance("TLS", provider);
+        sc.init(null, new TrustManager[]{new TrustAllManager()}, null);
+        SSLSocketFactory ssf = sc.getSocketFactory();
+
+        return sendHttpGetRequest(ssf, url);
+    }
+
+    public static String readFromStream(InputStream inputStream) throws IOException {
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String str;
+        StringBuilder buffer = new StringBuilder();
+        while ((str = bufferedReader.readLine()) != null) {
+            buffer.append(str);
+        }
+        return buffer.toString();
+    }
+
+
+    public static KeyStore loadKeyStoreFromTrustedListPem(String filePath) throws KeyStoreException, CertificateException, NoSuchProviderException, IOException, NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, null);
+        List<X509Certificate> x509Certificates = TestHelper.getX509CertificatesFromPEM(filePath);
+
+        for (X509Certificate cert : x509Certificates) {
+            keyStore.setCertificateEntry(cert.getSerialNumber().toString(), cert);
+        }
+        return keyStore;
+    }
+
+    public static KeyStore loadKeyStoreFromPFX(String filePath, String psw) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, IOException {
+        return TestHelper.getKeyStore(filePath, psw);
+    }
+
+    public static void asyncExecute(Runnable runnable) {
+        new Thread(() -> {
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+
+    public static void httpServerStart(int port, SSLServerSocketFactory sslServerSocketFactory, String response) throws IOException {
+
+        SSLServerSocket serverSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(port);
+
+        while (true) {
+            try (Socket socket = serverSocket.accept();
+                 DataInputStream in = new DataInputStream(socket.getInputStream());
+                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            ) {
+
+
+                byte[] buf = new byte[8192];
+                int len = in.read(buf);
+                if (len == -1) {
+                    System.out.println("eof");
+                }
+                byte[] body = response.getBytes();
+                byte[] resp = ("HTTP/1.1 200 OK\r\n" +
+                        "Server: TLCP/1.1\r\n" +
+                        "Content-Length:" + body.length + "\r\n" +
+                        "Content-Type: text/plain\r\n" +
+                        "Connection: close\r\n\r\n").getBytes();
+
+                out.write(resp, 0, resp.length);
+                out.write(body, 0, body.length);
+                out.flush();
+            }
+        }
+    }
+
+
+    public interface Runnable {
+
+        void run() throws Exception;
+    }
+
 }
