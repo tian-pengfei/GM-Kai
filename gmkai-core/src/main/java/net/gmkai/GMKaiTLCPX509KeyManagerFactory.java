@@ -3,7 +3,7 @@ package net.gmkai;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactorySpi;
 import javax.net.ssl.ManagerFactoryParameters;
-import java.security.*;
+import java.security.KeyStore;
 import java.util.Objects;
 
 public class GMKaiTLCPX509KeyManagerFactory extends KeyManagerFactorySpi {

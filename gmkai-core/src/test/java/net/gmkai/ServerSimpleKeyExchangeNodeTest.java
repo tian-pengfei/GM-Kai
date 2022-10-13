@@ -11,7 +11,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,15 +20,14 @@ public class ServerSimpleKeyExchangeNodeTest {
 
     private X509Certificate[] sm2Chain;
 
-    private PrivateKey sm2SignKey;
-
     private X509Certificate[] rsaChain;
-
-    private PrivateKey rsaSignKey;
 
     private TLCPX509Possession sm2Possession;
 
     private TLCPX509Possession rsaPossession;
+
+    public ServerSimpleKeyExchangeNodeTest() {
+    }
 
 
     @BeforeEach

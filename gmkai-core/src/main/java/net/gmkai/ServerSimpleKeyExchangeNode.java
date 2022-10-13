@@ -9,7 +9,6 @@ import net.gmkai.util.ByteBuffers;
 import net.gmkai.util.Bytes;
 import net.gmkai.util.Certificates;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
