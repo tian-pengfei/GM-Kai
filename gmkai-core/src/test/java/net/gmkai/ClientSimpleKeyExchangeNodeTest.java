@@ -27,17 +27,7 @@ public class ClientSimpleKeyExchangeNodeTest {
 
     private TLCPX509Possession rsaPossession;
 
-    byte[] sm2_client_key_exchange_msg = Hexs.decode("00 9b 30 81 98 02 20 a9 76 a3 24 e1\n" +
-            "   51 75 ef 89 a7 61 7e 61 a3 86 29 40 6a 65 93 da\n" +
-            "   e4 77 ad d9 d4 6d 7d 8b 73 46 73 02 20 b5 11 0e\n" +
-            "   31 8c 7a 2d d5 61 a2 c9 cc d4 60 b3 09 7e 1d 40\n" +
-            "   7f b8 fb c6 83 5e e0 e5 77 85 31 12 1d 04 20 41\n" +
-            "   26 25 d2 66 00 41 42 e2 25 65 6d 89 3b 17 f7 b9\n" +
-            "   eb 87 76 5e dc 1b 7c 52 29 d7 78 c6 65 da 78 04\n" +
-            "   30 c9 2c f1 af c8 24 12 e3 40 76 c9 3d 97 ac 49\n" +
-            "   6a dc 01 ca 4a 31 4e 8d 5d 76 69 3b c2 39 56 ea\n" +
-            "   f1 3b 2f 3e 9e 42 c4 fa 4f d4 94 df 93 a3 1b 38\n" +
-            "   1c");
+    byte[] sm2_client_key_exchange_msg = Hexs.decode("009c30819902204a36d004b00f66fd042045f1e85c3fbcb465228b800ab45aaa96c456aa38d4cc022100c9c1afdbd02d6817c0d2a50b4dfbdecdd96574a10bb08f84f2b58713992a56440420e5584687b768272a23373076938065fae7df34b48ae4060587a52a2df2bab12e0430c676caa745f1ff300c7f4a11f368162b803f35572b37e1180998ee8c6b96ac63af40389fcc4cf25df525a5ec30de9f30");
 
     @BeforeEach
     public void setUp() throws Exception {

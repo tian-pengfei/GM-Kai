@@ -60,7 +60,7 @@ public class ServerSimpleKeyExchangeNodeTest {
     @Test
     public void should_client_consume_ecc_key_change_message() throws IOException {
 
-        byte[] message = Hexs.decode("00463044022047c35c9ff6ab7e282f0a5b999527f97e903a593e3b80ba02ee57b7912f2b172d0220759658af8ecf0f2c4081e49025923194d1fac8bb4ca015a0b762e7bbf08fc6e7");
+        byte[] message = Hexs.decode("00473045022100b5800f84d6379793391468d8509fbaf76277197adeb48076522d4032762f95e90220550dc21dec81cf6e5c8a578eaaa92bef1374e94e2f4af589042ae3ec0958f293");
         should_client_consume_simple_key_exchange(TLSCipherSuite.ECC_SM4_CBC_SM3, sm2Chain, message);
 
     }
@@ -99,7 +99,6 @@ public class ServerSimpleKeyExchangeNodeTest {
         when(handshakeContext.getCurrentCipherSuite()).thenReturn(tlsCipherSuite);
         when(handshakeContext.isClientMode()).thenReturn(false);
         when(handshakeContext.getLocalCertChain()).thenReturn(chain);
-
         serverECCKeyExchangeNode.doProduce(handshakeContext);
     }
 }
